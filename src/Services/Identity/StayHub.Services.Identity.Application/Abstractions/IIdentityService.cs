@@ -55,6 +55,13 @@ public interface IIdentityService
         string userId,
         CancellationToken cancellationToken = default);
 
+    Task<Result<UserDto>> UpdateProfileAsync(
+        string userId,
+        string firstName,
+        string lastName,
+        string? phoneNumber,
+        CancellationToken cancellationToken = default);
+
     Task<bool> IsEmailUniqueAsync(
         string email,
         CancellationToken cancellationToken = default);
@@ -78,6 +85,8 @@ public sealed record UserDto(
     string Email,
     string FirstName,
     string LastName,
+    string? PhoneNumber,
+    string? AvatarUrl,
     string Role,
     bool EmailConfirmed,
     DateTime CreatedAt);

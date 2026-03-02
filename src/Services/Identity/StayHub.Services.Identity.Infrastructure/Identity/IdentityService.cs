@@ -172,7 +172,7 @@ public sealed class IdentityService : IIdentityService
         // Publish domain event
         await _mediator.Publish(new UserLoggedInEvent(user.Id, email, ipAddress), cancellationToken);
 
-        var userDto = new UserDto(user.Id, user.Email!, user.FirstName, user.LastName, role, user.EmailConfirmed, user.CreatedAt);
+        var userDto = MapToDto(user, role);
 
         return Result.Success(new AuthenticationResult(accessToken, refreshToken.Token, expiresAt, userDto));
     }
@@ -237,7 +237,7 @@ public sealed class IdentityService : IIdentityService
 
         _logger.LogInformation("Token refreshed for UserId {UserId} from {IpAddress}", user.Id, ipAddress);
 
-        var userDto = new UserDto(user.Id, user.Email!, user.FirstName, user.LastName, role, user.EmailConfirmed, user.CreatedAt);
+        var userDto = MapToDto(user, role);
 
         return Result.Success(new AuthenticationResult(accessToken, newRefreshToken.Token, expiresAt, userDto));
     }
@@ -392,14 +392,41 @@ public sealed class IdentityService : IIdentityService
         var roles = await _userManager.GetRolesAsync(user);
         var role = roles.FirstOrDefault() ?? AppRoles.Guest;
 
-        return Result.Success(new UserDto(
-            user.Id,
-            user.Email!,
-            user.FirstName,
-            user.LastName,
-            role,
-            user.EmailConfirmed,
-            user.CreatedAt));
+        return Result.Success(MapToDto(user, role));
+    }
+
+    /// <inheritdoc />
+    public async Task<Result<UserDto>> UpdateProfileAsync(
+        string userId,
+        string firstName,
+        string lastName,
+        string? phoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return Result.Failure<UserDto>(IdentityErrors.User.NotFound);
+        }
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+        user.PhoneNumber = phoneNumber;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            _logger.LogWarning("Profile update failed for UserId {UserId}: {Errors}", userId, errors);
+            return Result.Failure<UserDto>(Error.Validation("User.UpdateFailed", $"Profile update failed: {errors}"));
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var role = roles.FirstOrDefault() ?? AppRoles.Guest;
+
+        _logger.LogInformation("Profile updated for UserId {UserId}", userId);
+
+        return Result.Success(MapToDto(user, role));
     }
 
     /// <inheritdoc />
@@ -413,4 +440,17 @@ public sealed class IdentityService : IIdentityService
 
         return user is null;
     }
+
+    // ── Private helpers ──────────────────────────────────────────────────
+
+    private static UserDto MapToDto(ApplicationUser user, string role) => new(
+        user.Id,
+        user.Email!,
+        user.FirstName,
+        user.LastName,
+        user.PhoneNumber,
+        user.AvatarUrl,
+        role,
+        user.EmailConfirmed,
+        user.CreatedAt);
 }

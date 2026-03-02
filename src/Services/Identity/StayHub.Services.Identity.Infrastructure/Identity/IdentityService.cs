@@ -1,11 +1,15 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using StayHub.Services.Identity.Application;
 using StayHub.Services.Identity.Application.Abstractions;
+using StayHub.Services.Identity.Domain.Entities;
 using StayHub.Services.Identity.Domain.Enums;
 using StayHub.Services.Identity.Domain.Events;
+using StayHub.Services.Identity.Domain.Repositories;
+using StayHub.Shared.Interfaces;
 using StayHub.Shared.Result;
 
 namespace StayHub.Services.Identity.Infrastructure.Identity;
@@ -21,15 +25,30 @@ namespace StayHub.Services.Identity.Infrastructure.Identity;
 public sealed class IdentityService : IIdentityService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IConfiguration _configuration;
     private readonly IMediator _mediator;
     private readonly ILogger<IdentityService> _logger;
 
     public IdentityService(
         UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        IJwtTokenGenerator jwtTokenGenerator,
+        IRefreshTokenRepository refreshTokenRepository,
+        IUnitOfWork unitOfWork,
+        IConfiguration configuration,
         IMediator mediator,
         ILogger<IdentityService> logger)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
+        _jwtTokenGenerator = jwtTokenGenerator;
+        _refreshTokenRepository = refreshTokenRepository;
+        _unitOfWork = unitOfWork;
+        _configuration = configuration;
         _mediator = mediator;
         _logger = logger;
     }
@@ -98,9 +117,64 @@ public sealed class IdentityService : IIdentityService
         string ipAddress,
         CancellationToken cancellationToken = default)
     {
-        // Will be implemented in commit 12 (Authentication & JWT)
-        await Task.CompletedTask;
-        throw new NotImplementedException("AuthenticateAsync will be implemented in the authentication commit.");
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            return Result.Failure<AuthenticationResult>(IdentityErrors.User.InvalidCredentials);
+        }
+
+        if (!user.IsActive)
+        {
+            return Result.Failure<AuthenticationResult>(IdentityErrors.User.AccountDisabled);
+        }
+
+        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: true);
+
+        if (signInResult.IsLockedOut)
+        {
+            _logger.LogWarning("Account locked for {Email}", email);
+            return Result.Failure<AuthenticationResult>(IdentityErrors.User.AccountLocked);
+        }
+
+        if (!signInResult.Succeeded)
+        {
+            return Result.Failure<AuthenticationResult>(IdentityErrors.User.InvalidCredentials);
+        }
+
+        // Get user role
+        var roles = await _userManager.GetRolesAsync(user);
+        var role = roles.FirstOrDefault() ?? AppRoles.Guest;
+
+        // Generate JWT access token
+        var (accessToken, expiresAt) = _jwtTokenGenerator.GenerateAccessToken(user.Id, user.Email!, role);
+
+        // Generate and persist refresh token
+        var refreshTokenDays = int.Parse(
+            _configuration["Jwt:RefreshTokenExpirationDays"] ?? "7",
+            System.Globalization.CultureInfo.InvariantCulture);
+
+        var refreshToken = Domain.Entities.RefreshToken.Create(
+            user.Id,
+            _jwtTokenGenerator.GenerateRefreshToken(),
+            DateTime.UtcNow.AddDays(refreshTokenDays),
+            ipAddress);
+
+        _refreshTokenRepository.Add(refreshToken);
+
+        // Update last login timestamp
+        user.LastLoginAt = DateTime.UtcNow;
+        await _userManager.UpdateAsync(user);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("User {UserId} logged in from {IpAddress}", user.Id, ipAddress);
+
+        // Publish domain event
+        await _mediator.Publish(new UserLoggedInEvent(user.Id, email, ipAddress), cancellationToken);
+
+        var userDto = new UserDto(user.Id, user.Email!, user.FirstName, user.LastName, role, user.EmailConfirmed, user.CreatedAt);
+
+        return Result.Success(new AuthenticationResult(accessToken, refreshToken.Token, expiresAt, userDto));
     }
 
     /// <inheritdoc />
@@ -109,8 +183,63 @@ public sealed class IdentityService : IIdentityService
         string ipAddress,
         CancellationToken cancellationToken = default)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException("RefreshTokenAsync will be implemented in the authentication commit.");
+        var existingToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken, cancellationToken);
+
+        if (existingToken is null)
+        {
+            return Result.Failure<AuthenticationResult>(IdentityErrors.Token.InvalidRefreshToken);
+        }
+
+        // Detect reuse of revoked token — potential token theft
+        if (existingToken.IsRevoked)
+        {
+            // Revoke entire token family for this user (security measure)
+            _logger.LogWarning("Reuse of revoked refresh token detected for UserId {UserId}. Revoking all tokens.", existingToken.UserId);
+            await _refreshTokenRepository.RevokeAllByUserIdAsync(existingToken.UserId, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result.Failure<AuthenticationResult>(IdentityErrors.Token.RefreshTokenRevoked);
+        }
+
+        if (existingToken.IsExpired)
+        {
+            return Result.Failure<AuthenticationResult>(IdentityErrors.Token.RefreshTokenExpired);
+        }
+
+        // Find the user
+        var user = await _userManager.FindByIdAsync(existingToken.UserId);
+        if (user is null || !user.IsActive)
+        {
+            return Result.Failure<AuthenticationResult>(IdentityErrors.User.NotFound);
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var role = roles.FirstOrDefault() ?? AppRoles.Guest;
+
+        // Generate new token pair
+        var (accessToken, expiresAt) = _jwtTokenGenerator.GenerateAccessToken(user.Id, user.Email!, role);
+
+        var refreshTokenDays = int.Parse(
+            _configuration["Jwt:RefreshTokenExpirationDays"] ?? "7",
+            System.Globalization.CultureInfo.InvariantCulture);
+
+        var newRefreshToken = Domain.Entities.RefreshToken.Create(
+            user.Id,
+            _jwtTokenGenerator.GenerateRefreshToken(),
+            DateTime.UtcNow.AddDays(refreshTokenDays),
+            ipAddress);
+
+        // Rotate: revoke old, persist new
+        existingToken.Revoke(ipAddress, newRefreshToken.Token);
+        _refreshTokenRepository.Update(existingToken);
+        _refreshTokenRepository.Add(newRefreshToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("Token refreshed for UserId {UserId} from {IpAddress}", user.Id, ipAddress);
+
+        var userDto = new UserDto(user.Id, user.Email!, user.FirstName, user.LastName, role, user.EmailConfirmed, user.CreatedAt);
+
+        return Result.Success(new AuthenticationResult(accessToken, newRefreshToken.Token, expiresAt, userDto));
     }
 
     /// <inheritdoc />
@@ -119,8 +248,25 @@ public sealed class IdentityService : IIdentityService
         string ipAddress,
         CancellationToken cancellationToken = default)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException("RevokeRefreshTokenAsync will be implemented in the authentication commit.");
+        var existingToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken, cancellationToken);
+
+        if (existingToken is null)
+        {
+            return Result.Failure(IdentityErrors.Token.InvalidRefreshToken);
+        }
+
+        if (!existingToken.IsActive)
+        {
+            return Result.Failure(IdentityErrors.Token.InvalidRefreshToken);
+        }
+
+        existingToken.Revoke(ipAddress);
+        _refreshTokenRepository.Update(existingToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("Refresh token revoked for UserId {UserId} from {IpAddress}", existingToken.UserId, ipAddress);
+
+        return Result.Success();
     }
 
     /// <inheritdoc />

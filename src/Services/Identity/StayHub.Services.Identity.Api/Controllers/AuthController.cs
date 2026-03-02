@@ -1,29 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
+using StayHub.Services.Identity.Application.Abstractions;
+using StayHub.Services.Identity.Application.Features.Login;
+using StayHub.Services.Identity.Application.Features.RefreshToken;
 using StayHub.Services.Identity.Application.Features.Register;
+using StayHub.Services.Identity.Application.Features.RevokeToken;
 
 namespace StayHub.Services.Identity.Api.Controllers;
 
 /// <summary>
 /// Authentication controller — handles user registration, login, token refresh, and logout.
 ///
-/// Endpoints:
-/// POST /api/auth/register  — Create a new user account
-/// POST /api/auth/login     — Authenticate and receive JWT tokens (commit 12)
-/// POST /api/auth/refresh   — Refresh an expired access token (commit 12)
-/// POST /api/auth/revoke    — Revoke a refresh token / logout (commit 12)
+/// Security design:
+/// - Access token (JWT, 15min) → returned in response body, stored in memory by client
+/// - Refresh token (random, 7 days) → sent as httpOnly secure cookie (prevents XSS access)
+/// - Token rotation on every refresh (prevents replay attacks)
+/// - Revoked token reuse detection (revokes entire token family)
 /// </summary>
 [Route("api/auth")]
 public sealed class AuthController : ApiController
 {
+    private const string RefreshTokenCookieName = "refreshToken";
+
     /// <summary>
     /// Register a new user account.
     /// </summary>
-    /// <param name="request">Registration details (email, password, name, role).</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>201 Created with user details, or 400/409 on failure.</returns>
-    /// <response code="201">User created successfully.</response>
-    /// <response code="400">Validation failed (invalid email, weak password, etc.).</response>
-    /// <response code="409">Email already in use.</response>
     [HttpPost("register")]
     [ProducesResponseType(typeof(RegisterUserResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -36,4 +36,158 @@ public sealed class AuthController : ApiController
 
         return HandleCreatedResult(result, nameof(Register), new { userId = result.IsSuccess ? result.Value.UserId : null });
     }
+
+    /// <summary>
+    /// Authenticate with email and password.
+    /// Returns access token in body; sets refresh token as httpOnly cookie.
+    /// </summary>
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Login(
+        [FromBody] LoginRequest request,
+        CancellationToken cancellationToken)
+    {
+        var ipAddress = GetIpAddress();
+
+        var command = new LoginUserCommand(request.Email, request.Password, ipAddress);
+        var result = await Mediator.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleResult(result);
+        }
+
+        SetRefreshTokenCookie(result.Value.RefreshToken);
+
+        return Ok(new LoginResponse(
+            result.Value.AccessToken,
+            result.Value.AccessTokenExpiresAt,
+            result.Value.User));
+    }
+
+    /// <summary>
+    /// Refresh an expired access token using the refresh token cookie.
+    /// Issues a new token pair (rotation).
+    /// </summary>
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Refresh(CancellationToken cancellationToken)
+    {
+        var refreshToken = Request.Cookies[RefreshTokenCookieName];
+
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            return Unauthorized(new { status = 401, error = "Token.Missing", message = "Refresh token cookie not found." });
+        }
+
+        var ipAddress = GetIpAddress();
+        var command = new RefreshTokenCommand(refreshToken, ipAddress);
+        var result = await Mediator.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            // Clear the invalid cookie
+            DeleteRefreshTokenCookie();
+            return HandleResult(result);
+        }
+
+        SetRefreshTokenCookie(result.Value.RefreshToken);
+
+        return Ok(new LoginResponse(
+            result.Value.AccessToken,
+            result.Value.AccessTokenExpiresAt,
+            result.Value.User));
+    }
+
+    /// <summary>
+    /// Revoke the current refresh token (logout).
+    /// Clears the refresh token cookie.
+    /// </summary>
+    [HttpPost("revoke")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Revoke(CancellationToken cancellationToken)
+    {
+        var refreshToken = Request.Cookies[RefreshTokenCookieName];
+
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            return BadRequest(new { status = 400, error = "Token.Missing", message = "Refresh token cookie not found." });
+        }
+
+        var ipAddress = GetIpAddress();
+        var command = new RevokeTokenCommand(refreshToken, ipAddress);
+        var result = await Mediator.Send(command, cancellationToken);
+
+        DeleteRefreshTokenCookie();
+
+        return HandleResult(result);
+    }
+
+    // ── Private helpers ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Sets the refresh token as an httpOnly secure cookie.
+    /// - HttpOnly: prevents JavaScript access (XSS protection)
+    /// - Secure: only sent over HTTPS
+    /// - SameSite=Strict: prevents CSRF
+    /// - Path=/api/auth: only sent to auth endpoints
+    /// </summary>
+    private void SetRefreshTokenCookie(string token)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddDays(7),
+            Path = "/api/auth"
+        };
+
+        Response.Cookies.Append(RefreshTokenCookieName, token, cookieOptions);
+    }
+
+    private void DeleteRefreshTokenCookie()
+    {
+        Response.Cookies.Delete(RefreshTokenCookieName, new CookieOptions
+        {
+            Path = "/api/auth"
+        });
+    }
+
+    private string GetIpAddress()
+    {
+        // Check for forwarded IP (behind reverse proxy / API gateway)
+        if (Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+        {
+            var ip = forwardedFor.FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(ip))
+            {
+                // X-Forwarded-For can be comma-separated; take the first (client) IP
+                return ip.Split(',')[0].Trim();
+            }
+        }
+
+        return HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "unknown";
+    }
 }
+
+// ── Request/Response DTOs for the API layer ──────────────────────────────
+
+/// <summary>
+/// Login request body — only email and password.
+/// IP address is extracted from the request headers by the controller.
+/// </summary>
+public sealed record LoginRequest(string Email, string Password);
+
+/// <summary>
+/// Login/refresh response — access token + user info.
+/// Refresh token is NOT in the body — it's in the httpOnly cookie.
+/// </summary>
+public sealed record LoginResponse(
+    string AccessToken,
+    DateTime AccessTokenExpiresAt,
+    UserDto User);

@@ -1,0 +1,33 @@
+<Project>
+
+  <!--
+    Directory.Build.props - Shared build properties for ALL projects in the solution.
+    This file is automatically imported by MSBuild for every project in subdirectories.
+    Centralizes versioning, common settings, and package versions to avoid duplication.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>7</WarningLevel>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <!-- Assembly metadata -->
+  <PropertyGroup>
+    <Company>StayHub</Company>
+    <Product>StayHub Hotel Marketplace</Product>
+    <Copyright>Copyright © 2026 StayHub. All rights reserved.</Copyright>
+    <Authors>Semir Tatlı</Authors>
+  </PropertyGroup>
+
+  <!-- Centralized package versions (NuGet Central Package Management) -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,123 @@
+# =====================================================
+# StayHub — Docker Compose (Development Environment)
+# =====================================================
+# Provides external dependencies for local development:
+# - SQL Server 2022 (database per microservice)
+# - RabbitMQ (message broker with management UI)
+# - Seq (structured log aggregation and search)
+#
+# Usage:
+#   cd docker
+#   cp .env.example .env              # first time only
+#   docker compose up -d              # start all services
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d  # with dev overrides
+#   docker compose down               # stop all services
+#   docker compose down -v            # stop + delete volumes (reset data)
+#
+# Dashboards:
+#   RabbitMQ Management: http://localhost:15672 (stayhub / stayhub_dev_pass)
+#   Seq Logs:            http://localhost:8081
+#
+# Connection strings for appsettings.Development.json:
+#   SQL Server: "Server=localhost,1433;Database=StayHub_{ServiceName};User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True"
+#   RabbitMQ:   "amqp://stayhub:stayhub_dev_pass@localhost:5672"
+#   Seq:        "http://localhost:5341"
+# =====================================================
+
+services:
+
+  # ── SQL Server 2022 ─────────────────────────────────
+  # Each microservice creates its own database on first run
+  # via EF Core migrations (Database.Migrate() in Program.cs).
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: stayhub-sqlserver
+    hostname: stayhub-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-YourStrong!Passw0rd}
+      MSSQL_PID: ${MSSQL_PID:-Developer}
+    ports:
+      - "${SQL_SERVER_PORT:-1433}:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -C -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - stayhub-network
+
+  # ── RabbitMQ 3.13 (with Management Plugin) ─────────
+  # Used by MassTransit for async messaging between services.
+  # Management UI provides queue inspection, message tracing.
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: stayhub-rabbitmq
+    hostname: stayhub-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-stayhub}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-stayhub_dev_pass}
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"           # AMQP protocol
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"  # Management UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - stayhub-network
+
+  # ── Seq (Structured Log Server) ────────────────────
+  # Serilog sinks send structured events to Seq.
+  # Provides real-time search, dashboards, and alerts
+  # across all microservices in one UI.
+  seq:
+    image: datalust/seq:latest
+    container_name: stayhub-seq
+    hostname: stayhub-seq
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINPASSWORDHASH: ${SEQ_FIRSTRUN_ADMINPASSWORDHASH:-}
+    ports:
+      - "${SEQ_PORT:-5341}:5341"     # Ingestion API (Serilog sends here)
+      - "${SEQ_UI_PORT:-8081}:80"    # Web UI
+    volumes:
+      - seq-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5341/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - stayhub-network
+
+# ── Volumes ───────────────────────────────────────────
+# Named volumes persist data across container restarts.
+# Use 'docker compose down -v' to delete all data.
+volumes:
+  sqlserver-data:
+    driver: local
+  rabbitmq-data:
+    driver: local
+  seq-data:
+    driver: local
+
+# ── Network ───────────────────────────────────────────
+# Custom bridge network for service discovery by container name.
+# When services run in Docker (future), they connect to this network
+# and reach dependencies by hostname (e.g., stayhub-sqlserver:1433).
+networks:
+  stayhub-network:
+    driver: bridge
+    name: stayhub-network

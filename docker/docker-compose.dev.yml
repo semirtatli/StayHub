@@ -1,0 +1,27 @@
+# =====================================================
+# StayHub — Docker Compose (Development Overrides)
+# =====================================================
+# Additional development-only settings.
+# Use with: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#
+# This file:
+# - Sets lower resource limits for dev machines
+# - Enables verbose logging for debugging
+# =====================================================
+
+services:
+
+  sqlserver:
+    # Lower memory limit for development (default is 2GB minimum)
+    environment:
+      MSSQL_MEMORY_LIMIT_MB: "2048"
+
+  rabbitmq:
+    # Enable additional plugins useful for development
+    environment:
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit log_levels [{connection,warning},{channel,warning}]"
+
+  seq:
+    # No additional dev overrides needed — Seq is lightweight
+    environment:
+      SEQ_CACHE_SYSTEMRAMTARGET: "256000000"  # 256MB target (dev)

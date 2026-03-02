@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Identity.Domain</RootNamespace>
+    <AssemblyName>StayHub.Services.Identity.Domain</AssemblyName>
+    <Description>Identity Service domain layer — entities, value objects, domain events, and repository interfaces.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared\StayHub.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

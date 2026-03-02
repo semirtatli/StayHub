@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Identity.Application</RootNamespace>
+    <AssemblyName>StayHub.Services.Identity.Application</AssemblyName>
+    <Description>Identity Service application layer — commands, queries, handlers, DTOs, and validators.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Identity.Domain\StayHub.Services.Identity.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Mapster" />
+  </ItemGroup>
+
+</Project>

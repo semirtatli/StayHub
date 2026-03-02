@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Identity.Api</RootNamespace>
+    <AssemblyName>StayHub.Services.Identity.Api</AssemblyName>
+    <Description>Identity Service API layer — controllers, middleware, and host configuration.</Description>
+    <!-- CA1848/CA1873: Logger message delegates in middleware — acceptable overhead -->
+    <NoWarn>CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Identity.Application\StayHub.Services.Identity.Application.csproj" />
+    <ProjectReference Include="..\StayHub.Services.Identity.Infrastructure\StayHub.Services.Identity.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+</Project>

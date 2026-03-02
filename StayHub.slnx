@@ -7,4 +7,11 @@
   <Folder Name="/src/ApiGateway/">
     <Project Path="src/ApiGateway/StayHub.ApiGateway/StayHub.ApiGateway.csproj" />
   </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/StayHub.Services.Identity.Domain/StayHub.Services.Identity.Domain.csproj" />
+    <Project Path="src/Services/Identity/StayHub.Services.Identity.Application/StayHub.Services.Identity.Application.csproj" />
+    <Project Path="src/Services/Identity/StayHub.Services.Identity.Infrastructure/StayHub.Services.Identity.Infrastructure.csproj" />
+    <Project Path="src/Services/Identity/StayHub.Services.Identity.Api/StayHub.Services.Identity.Api.csproj" />
+  </Folder>
 </Solution>

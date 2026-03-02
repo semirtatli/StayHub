@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Identity.Infrastructure</RootNamespace>
+    <AssemblyName>StayHub.Services.Identity.Infrastructure</AssemblyName>
+    <Description>Identity Service infrastructure layer — EF Core DbContext, ASP.NET Core Identity, repositories, and external service integrations.</Description>
+    <!-- CA1716: "Shared" in transitive namespace -->
+    <NoWarn>CA1716</NoWarn>
+  </PropertyGroup>
+
+  <!-- Required for AddIdentity extension method (ASP.NET Core runtime APIs in a class library) -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Identity.Application\StayHub.Services.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared.Infrastructure\StayHub.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MediatR" />
+  </ItemGroup>
+
+</Project>

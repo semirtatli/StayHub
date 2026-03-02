@@ -47,7 +47,7 @@
 |---|--------|--------|-------------|
 | 16 | Hotel Service scaffold | ✅ | 4-layer architecture, domain model (Hotel aggregate, Room entity, value objects) |
 | 17 | Hotel CRUD commands | ✅ | Create/Update hotel with DDD validation, GetById/GetByOwner queries, HotelsController |
-| 18 | Room management | ⬚ | Room types, pricing (Money value object), amenities, bed configurations |
+| 18 | Room management | ✅ | AddRoom, UpdateRoom, RemoveRoom commands, GetRoomsByHotel query, RoomsController |
 | 19 | Photo management | ⬚ | Upload/reorder/delete, local storage abstraction (→ Azure Blob later) |
 | 20 | Search engine | ⬚ | Full-text search, dynamic filtering (Specification pattern), geo-distance, pagination |
 | 21 | Availability engine | ⬚ | Date-range availability checks, room inventory management |

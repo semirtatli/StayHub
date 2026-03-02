@@ -45,7 +45,7 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 16 | Hotel Service scaffold | ⬚ | 4-layer architecture, domain model (Hotel aggregate, Room entity, value objects) |
+| 16 | Hotel Service scaffold | ✅ | 4-layer architecture, domain model (Hotel aggregate, Room entity, value objects) |
 | 17 | Hotel CRUD commands | ⬚ | Create/Update hotel with DDD validation, specification pattern for queries |
 | 18 | Room management | ⬚ | Room types, pricing (Money value object), amenities, bed configurations |
 | 19 | Photo management | ⬚ | Upload/reorder/delete, local storage abstraction (→ Azure Blob later) |

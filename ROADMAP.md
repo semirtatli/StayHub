@@ -27,7 +27,7 @@
 | 5 | `feat: add shared kernel library` | ✅ | `StayHub.Shared` project: base Entity, AggregateRoot, ValueObject, DomainEvent, Result<T>, IRepository, IAuditable, ISoftDeletable, pagination, Guard, Exceptions |
 | 6 | `feat: add CQRS pipeline behaviors and DI registration` | ✅ | ValidationBehavior, LoggingBehavior, TransactionBehavior, UnhandledExceptionBehavior, ICommandBase marker, SharedKernelRegistration DI extension |
 | 7 | `feat: add infrastructure abstractions with EF Core interceptors` | ✅ | BaseDbContext, Repository<T>, SpecificationRepository<T>, Specification pattern, AuditableEntityInterceptor, SoftDeleteInterceptor, BaseEntityConfiguration, DateTimeProvider, InfrastructureRegistration |
-| 8 | Docker Compose setup | ⬚ | SQL Server, RabbitMQ, Seq containers, networking, health checks |
+| 8 | `infra: add Docker Compose for SQL Server, RabbitMQ, and Seq` | ✅ | docker-compose.yml (SQL Server 2022, RabbitMQ 3.13, Seq), docker-compose.dev.yml, .env.example, health checks, named volumes, custom network |
 | 9 | API Gateway (YARP) | ⬚ | YARP reverse proxy config, rate limiting, CORS, auth forwarding, health aggregation, request logging |
 
 ## Phase 2: Identity Service

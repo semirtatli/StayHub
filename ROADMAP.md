@@ -28,7 +28,7 @@
 | 6 | `feat: add CQRS pipeline behaviors and DI registration` | ✅ | ValidationBehavior, LoggingBehavior, TransactionBehavior, UnhandledExceptionBehavior, ICommandBase marker, SharedKernelRegistration DI extension |
 | 7 | `feat: add infrastructure abstractions with EF Core interceptors` | ✅ | BaseDbContext, Repository<T>, SpecificationRepository<T>, Specification pattern, AuditableEntityInterceptor, SoftDeleteInterceptor, BaseEntityConfiguration, DateTimeProvider, InfrastructureRegistration |
 | 8 | `infra: add Docker Compose for SQL Server, RabbitMQ, and Seq` | ✅ | docker-compose.yml (SQL Server 2022, RabbitMQ 3.13, Seq), docker-compose.dev.yml, .env.example, health checks, named volumes, custom network |
-| 9 | API Gateway (YARP) | ⬚ | YARP reverse proxy config, rate limiting, CORS, auth forwarding, health aggregation, request logging |
+| 9 | `feat: add YARP API Gateway with rate limiting and CORS` | ✅ | YARP reverse proxy with 7 service routes, fixed/sliding rate limiting per IP, CORS for React frontend, correlation ID middleware, global exception handler, Serilog+Seq logging, health endpoint |
 
 ## Phase 2: Identity Service
 

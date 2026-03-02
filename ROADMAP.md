@@ -39,7 +39,7 @@
 | 12 | Authentication (Login/JWT) | ✅ | JWT generation, refresh token rotation, secure cookie options |
 | 13 | Role management | ✅ | Guest/HotelOwner/Admin roles, role assignment, authorization policies |
 | 14 | Profile management | ✅ | Update profile, change password, avatar upload |
-| 15 | Email verification | ⬚ | Confirmation token flow, integration event to Notification Service |
+| 15 | Email verification | ✅ | Confirmation token flow, integration event to Notification Service |
 
 ## Phase 3: Hotel Service
 

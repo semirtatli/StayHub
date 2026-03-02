@@ -40,13 +40,15 @@ artifacts/
 ## .NET Core
 project.lock.json
 project.fragment.lock.json
-**/Properties/launchSettings.json
+# launchSettings.json — tracked in this project (ports/env are shared config, no secrets)
+# **/Properties/launchSettings.json
 
 ## ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
 ## User secrets
-**/appsettings.Development.json
+# appsettings.Development.json — tracked in this project (dev config, no production secrets)
+# **/appsettings.Development.json
 **/appsettings.Local.json
 secrets.json
 

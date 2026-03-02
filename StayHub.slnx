@@ -4,4 +4,7 @@
     <Project Path="src/Shared/StayHub.Shared/StayHub.Shared.csproj" />
     <Project Path="src/Shared/StayHub.Shared.Infrastructure/StayHub.Shared.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/ApiGateway/">
+    <Project Path="src/ApiGateway/StayHub.ApiGateway/StayHub.ApiGateway.csproj" />
+  </Folder>
 </Solution>

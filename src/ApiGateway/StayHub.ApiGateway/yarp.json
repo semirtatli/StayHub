@@ -1,0 +1,208 @@
+{
+  // =====================================================
+  // YARP Reverse Proxy — Route & Cluster Configuration
+  // =====================================================
+  // Routes: URL patterns that map incoming requests to clusters
+  // Clusters: Groups of backend service instances
+  //
+  // All microservice traffic enters through the gateway (port 5000)
+  // and is routed to the appropriate backend service.
+  // =====================================================
+
+  "ReverseProxy": {
+    "Routes": {
+
+      // ── Identity Service (/api/identity/*) ──────────
+      "identity-route": {
+        "ClusterId": "identity-cluster",
+        "Match": {
+          "Path": "/api/identity/{**catch-all}"
+        },
+        "Transforms": [
+          { "PathRemovePrefix": "/api/identity" }
+        ]
+      },
+
+      // ── Hotel Service (/api/hotels/*) ───────────────
+      "hotel-route": {
+        "ClusterId": "hotel-cluster",
+        "Match": {
+          "Path": "/api/hotels/{**catch-all}"
+        },
+        "Transforms": [
+          { "PathRemovePrefix": "/api/hotels" }
+        ]
+      },
+
+      // ── Booking Service (/api/bookings/*) ───────────
+      "booking-route": {
+        "ClusterId": "booking-cluster",
+        "Match": {
+          "Path": "/api/bookings/{**catch-all}"
+        },
+        "Transforms": [
+          { "PathRemovePrefix": "/api/bookings" }
+        ]
+      },
+
+      // ── Payment Service (/api/payments/*) ───────────
+      "payment-route": {
+        "ClusterId": "payment-cluster",
+        "Match": {
+          "Path": "/api/payments/{**catch-all}"
+        },
+        "Transforms": [
+          { "PathRemovePrefix": "/api/payments" }
+        ]
+      },
+
+      // ── Review Service (/api/reviews/*) ─────────────
+      "review-route": {
+        "ClusterId": "review-cluster",
+        "Match": {
+          "Path": "/api/reviews/{**catch-all}"
+        },
+        "Transforms": [
+          { "PathRemovePrefix": "/api/reviews" }
+        ]
+      },
+
+      // ── Notification Service (/api/notifications/*) ─
+      "notification-route": {
+        "ClusterId": "notification-cluster",
+        "Match": {
+          "Path": "/api/notifications/{**catch-all}"
+        },
+        "Transforms": [
+          { "PathRemovePrefix": "/api/notifications" }
+        ]
+      },
+
+      // ── Analytics Service (/api/analytics/*) ────────
+      "analytics-route": {
+        "ClusterId": "analytics-cluster",
+        "Match": {
+          "Path": "/api/analytics/{**catch-all}"
+        },
+        "Transforms": [
+          { "PathRemovePrefix": "/api/analytics" }
+        ]
+      }
+    },
+
+    "Clusters": {
+
+      "identity-cluster": {
+        "Destinations": {
+          "identity-primary": {
+            "Address": "https://localhost:5101"
+          }
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      },
+
+      "hotel-cluster": {
+        "Destinations": {
+          "hotel-primary": {
+            "Address": "https://localhost:5102"
+          }
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      },
+
+      "booking-cluster": {
+        "Destinations": {
+          "booking-primary": {
+            "Address": "https://localhost:5103"
+          }
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      },
+
+      "payment-cluster": {
+        "Destinations": {
+          "payment-primary": {
+            "Address": "https://localhost:5104"
+          }
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      },
+
+      "review-cluster": {
+        "Destinations": {
+          "review-primary": {
+            "Address": "https://localhost:5105"
+          }
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      },
+
+      "notification-cluster": {
+        "Destinations": {
+          "notification-primary": {
+            "Address": "https://localhost:5106"
+          }
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      },
+
+      "analytics-cluster": {
+        "Destinations": {
+          "analytics-primary": {
+            "Address": "https://localhost:5107"
+          }
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      }
+    }
+  }
+}

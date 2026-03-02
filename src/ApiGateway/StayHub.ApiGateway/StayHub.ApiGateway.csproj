@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.ApiGateway</RootNamespace>
+    <AssemblyName>StayHub.ApiGateway</AssemblyName>
+    <Description>YARP-based API Gateway — single entry point for all StayHub microservices. Handles routing, rate limiting, CORS, auth forwarding, and health aggregation.</Description>
+    <!-- CA1848/CA1873: Logger message delegates — acceptable for gateway middleware -->
+    <NoWarn>CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Yarp.ReverseProxy" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+  </ItemGroup>
+
+</Project>

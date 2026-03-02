@@ -24,7 +24,7 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 5 | Shared kernel library | ⬚ | `StayHub.Shared` project: base Entity, AggregateRoot, ValueObject, DomainEvent, Result<T>, IRepository, IAuditable, ISoftDeletable, pagination |
+| 5 | `feat: add shared kernel library` | ✅ | `StayHub.Shared` project: base Entity, AggregateRoot, ValueObject, DomainEvent, Result<T>, IRepository, IAuditable, ISoftDeletable, pagination, Guard, Exceptions |
 | 6 | CQRS abstractions & MediatR behaviors | ⬚ | ICommand<T>, IQuery<T>, ValidationBehavior, LoggingBehavior, TransactionBehavior |
 | 7 | Infrastructure abstractions | ⬚ | Generic repository, unit of work, specification base, EF Core interceptors (audit, soft-delete, domain event dispatch) |
 | 8 | Docker Compose setup | ⬚ | SQL Server, RabbitMQ, Seq containers, networking, health checks |

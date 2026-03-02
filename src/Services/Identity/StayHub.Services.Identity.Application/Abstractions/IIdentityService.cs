@@ -62,6 +62,14 @@ public interface IIdentityService
         string? phoneNumber,
         CancellationToken cancellationToken = default);
 
+    Task<Result<string>> GenerateEmailConfirmationTokenAsync(
+        string userId,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<UserDto>> GetUserByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default);
+
     Task<bool> IsEmailUniqueAsync(
         string email,
         CancellationToken cancellationToken = default);

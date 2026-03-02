@@ -1,20 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using StayHub.Services.Identity.Application.Abstractions;
+using StayHub.Services.Identity.Application.Features.ConfirmEmail;
 using StayHub.Services.Identity.Application.Features.Login;
 using StayHub.Services.Identity.Application.Features.RefreshToken;
 using StayHub.Services.Identity.Application.Features.Register;
+using StayHub.Services.Identity.Application.Features.ResendConfirmationEmail;
 using StayHub.Services.Identity.Application.Features.RevokeToken;
 
 namespace StayHub.Services.Identity.Api.Controllers;
 
 /// <summary>
-/// Authentication controller — handles user registration, login, token refresh, and logout.
+/// Authentication controller — handles user registration, login, token refresh,
+/// logout, and email verification.
 ///
 /// Security design:
 /// - Access token (JWT, 15min) → returned in response body, stored in memory by client
 /// - Refresh token (random, 7 days) → sent as httpOnly secure cookie (prevents XSS access)
 /// - Token rotation on every refresh (prevents replay attacks)
 /// - Revoked token reuse detection (revokes entire token family)
+/// - Email confirmation required for full account access
 /// </summary>
 [Route("api/auth")]
 public sealed class AuthController : ApiController
@@ -127,6 +131,41 @@ public sealed class AuthController : ApiController
         return HandleResult(result);
     }
 
+    /// <summary>
+    /// Confirm a user's email address using the confirmation token.
+    /// Called when the user clicks the link in their verification email.
+    /// </summary>
+    [HttpGet("confirm-email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ConfirmEmail(
+        [FromQuery] string userId,
+        [FromQuery] string token,
+        CancellationToken cancellationToken)
+    {
+        var command = new ConfirmEmailCommand(userId, token);
+        var result = await Mediator.Send(command, cancellationToken);
+
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Resend the email confirmation link.
+    /// Always returns 200 OK regardless of whether the email exists (prevents email enumeration).
+    /// </summary>
+    [HttpPost("resend-confirmation")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResendConfirmation(
+        [FromBody] ResendConfirmationRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new ResendConfirmationEmailCommand(request.Email);
+        var result = await Mediator.Send(command, cancellationToken);
+
+        return HandleResult(result);
+    }
+
     // ── Private helpers ──────────────────────────────────────────────────
 
     /// <summary>
@@ -191,3 +230,8 @@ public sealed record LoginResponse(
     string AccessToken,
     DateTime AccessTokenExpiresAt,
     UserDto User);
+
+/// <summary>
+/// Request body for resending email confirmation.
+/// </summary>
+public sealed record ResendConfirmationRequest(string Email);

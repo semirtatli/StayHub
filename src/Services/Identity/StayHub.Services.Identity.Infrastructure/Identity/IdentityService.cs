@@ -441,6 +441,46 @@ public sealed class IdentityService : IIdentityService
         return user is null;
     }
 
+    /// <inheritdoc />
+    public async Task<Result<string>> GenerateEmailConfirmationTokenAsync(
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return Result.Failure<string>(IdentityErrors.User.NotFound);
+        }
+
+        if (user.EmailConfirmed)
+        {
+            return Result.Failure<string>(IdentityErrors.Email.AlreadyConfirmed);
+        }
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        _logger.LogInformation("Email confirmation token generated for UserId {UserId}", userId);
+
+        return Result.Success(token);
+    }
+
+    /// <inheritdoc />
+    public async Task<Result<UserDto>> GetUserByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            return Result.Failure<UserDto>(IdentityErrors.User.NotFound);
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var role = roles.FirstOrDefault() ?? AppRoles.Guest;
+
+        return Result.Success(MapToDto(user, role));
+    }
+
     // ── Private helpers ──────────────────────────────────────────────────
 
     private static UserDto MapToDto(ApplicationUser user, string role) => new(

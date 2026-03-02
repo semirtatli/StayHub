@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StayHub.Services.Identity.Application.Abstractions;
+using StayHub.Services.Identity.Application.IntegrationEvents;
 using StayHub.Services.Identity.Domain.Repositories;
+using StayHub.Services.Identity.Infrastructure.Email;
 using StayHub.Services.Identity.Infrastructure.Identity;
 using StayHub.Services.Identity.Infrastructure.Persistence;
 using StayHub.Services.Identity.Infrastructure.Persistence.Repositories;
@@ -77,6 +79,10 @@ public static class InfrastructureRegistration
         // ── Application service implementations ──
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+
+        // ── Integration event senders ──
+        // Development: logs confirmation URL. Production: will publish to RabbitMQ.
+        services.AddScoped<IEmailVerificationSender, LogEmailVerificationSender>();
 
         return services;
     }

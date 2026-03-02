@@ -79,5 +79,13 @@ public static class IdentityErrors
         public static readonly Error InvalidToken = new(
             "Email.InvalidToken",
             "The email confirmation token is invalid.");
+
+        public static readonly Error AlreadyConfirmed = new(
+            "Email.AlreadyConfirmed",
+            "Email address has already been confirmed.");
+
+        public static readonly Error TokenGenerationFailed = new(
+            "Email.TokenGenerationFailed",
+            "Failed to generate email confirmation token.");
     }
 }

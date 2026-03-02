@@ -39,7 +39,20 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization();
+// ── Authorization policies ───────────────────────────────────────────────
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole(StayHub.Services.Identity.Domain.Enums.AppRoles.Admin));
+
+    options.AddPolicy("HotelOwnerOrAdmin", policy =>
+        policy.RequireRole(
+            StayHub.Services.Identity.Domain.Enums.AppRoles.HotelOwner,
+            StayHub.Services.Identity.Domain.Enums.AppRoles.Admin));
+
+    options.AddPolicy("Authenticated", policy =>
+        policy.RequireAuthenticatedUser());
+});
 
 // ── Controllers + Swagger ────────────────────────────────────────────────
 builder.Services.AddControllers();

@@ -275,8 +275,23 @@ public sealed class IdentityService : IIdentityService
         string token,
         CancellationToken cancellationToken = default)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException("ConfirmEmailAsync will be implemented in a later commit.");
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return Result.Failure(IdentityErrors.User.NotFound);
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded)
+        {
+            return Result.Failure(IdentityErrors.Email.ConfirmationFailed);
+        }
+
+        _logger.LogInformation("Email confirmed for UserId {UserId}", userId);
+
+        await _mediator.Publish(new EmailConfirmedEvent(userId, user.Email!), cancellationToken);
+
+        return Result.Success();
     }
 
     /// <inheritdoc />
@@ -286,8 +301,29 @@ public sealed class IdentityService : IIdentityService
         string newPassword,
         CancellationToken cancellationToken = default)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException("ChangePasswordAsync will be implemented in a later commit.");
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return Result.Failure(IdentityErrors.User.NotFound);
+        }
+
+        var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            _logger.LogWarning("Password change failed for UserId {UserId}: {Errors}", userId, errors);
+            return Result.Failure(IdentityErrors.User.PasswordChangeFailed);
+        }
+
+        _logger.LogInformation("Password changed for UserId {UserId}", userId);
+
+        // Revoke all refresh tokens on password change (security measure)
+        await _refreshTokenRepository.RevokeAllByUserIdAsync(userId, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _mediator.Publish(new PasswordChangedEvent(userId, user.Email!), cancellationToken);
+
+        return Result.Success();
     }
 
     /// <inheritdoc />
@@ -296,8 +332,50 @@ public sealed class IdentityService : IIdentityService
         string role,
         CancellationToken cancellationToken = default)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException("AssignRoleAsync will be implemented in a later commit.");
+        if (!AppRoles.All.Contains(role))
+        {
+            return Result.Failure(IdentityErrors.User.InvalidRole);
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return Result.Failure(IdentityErrors.User.NotFound);
+        }
+
+        // Remove existing roles and assign the new one
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        var oldRole = currentRoles.FirstOrDefault() ?? AppRoles.Guest;
+
+        if (oldRole == role)
+        {
+            return Result.Success(); // Already in the requested role
+        }
+
+        if (currentRoles.Count > 0)
+        {
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                _logger.LogWarning("Failed to remove existing roles for UserId {UserId}", userId);
+                return Result.Failure(IdentityErrors.User.RoleAssignmentFailed);
+            }
+        }
+
+        var addResult = await _userManager.AddToRoleAsync(user, role);
+        if (!addResult.Succeeded)
+        {
+            _logger.LogWarning("Failed to assign role {Role} to UserId {UserId}", role, userId);
+            return Result.Failure(IdentityErrors.User.RoleAssignmentFailed);
+        }
+
+        _logger.LogInformation("Role changed from {OldRole} to {NewRole} for UserId {UserId}", oldRole, role, userId);
+
+        await _mediator.Publish(
+            new UserRoleChangedEvent(userId, oldRole, role, userId),
+            cancellationToken);
+
+        return Result.Success();
     }
 
     /// <inheritdoc />

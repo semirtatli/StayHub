@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StayHub.Services.Identity.Application.Abstractions;
 using StayHub.Services.Identity.Domain.Repositories;
 using StayHub.Services.Identity.Infrastructure.Identity;
 using StayHub.Services.Identity.Infrastructure.Persistence;
@@ -72,6 +73,10 @@ public static class InfrastructureRegistration
 
         // ── Repositories ──
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+        // ── Application service implementations ──
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
         return services;
     }

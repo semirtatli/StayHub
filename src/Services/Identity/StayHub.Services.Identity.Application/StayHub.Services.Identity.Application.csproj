@@ -4,6 +4,8 @@
     <RootNamespace>StayHub.Services.Identity.Application</RootNamespace>
     <AssemblyName>StayHub.Services.Identity.Application</AssemblyName>
     <Description>Identity Service application layer — commands, queries, handlers, DTOs, and validators.</Description>
+    <!-- CA1848/CA1873: LoggerMessage delegates — acceptable in command handlers -->
+    <NoWarn>CA1848;CA1873</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

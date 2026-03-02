@@ -4,8 +4,8 @@
     <RootNamespace>StayHub.Services.Identity.Infrastructure</RootNamespace>
     <AssemblyName>StayHub.Services.Identity.Infrastructure</AssemblyName>
     <Description>Identity Service infrastructure layer — EF Core DbContext, ASP.NET Core Identity, repositories, and external service integrations.</Description>
-    <!-- CA1716: "Shared" in transitive namespace -->
-    <NoWarn>CA1716</NoWarn>
+    <!-- CA1716: "Shared" in transitive namespace; CA1848/CA1873: Logger delegates; CA1305: culture-specific formatting -->
+    <NoWarn>CA1716;CA1848;CA1873;CA1305</NoWarn>
   </PropertyGroup>
 
   <!-- Required for AddIdentity extension method (ASP.NET Core runtime APIs in a class library) -->

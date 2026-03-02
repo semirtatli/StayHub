@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using StayHub.Services.Identity.Api.Middleware;
 using StayHub.Services.Identity.Application;
 using StayHub.Services.Identity.Infrastructure;
+using StayHub.Services.Identity.Infrastructure.Identity;
+using StayHub.Services.Identity.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +96,16 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// ── Database migration & seeding (development only) ─────────────────────
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
+await IdentitySeeder.SeedRolesAsync(app.Services);
 
 // ── Middleware pipeline ──────────────────────────────────────────────────
 app.UseMiddleware<ExceptionHandlingMiddleware>();

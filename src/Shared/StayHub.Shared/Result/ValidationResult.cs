@@ -1,10 +1,19 @@
 namespace StayHub.Shared.Result;
 
 /// <summary>
+/// Marker interface for validation results — allows polymorphic access to errors
+/// in base controllers without knowing the generic type parameter.
+/// </summary>
+public interface IValidationResult
+{
+    Error[] Errors { get; }
+}
+
+/// <summary>
 /// Represents a validation result containing multiple errors.
 /// Returned by the ValidationBehavior when FluentValidation fails.
 /// </summary>
-public sealed class ValidationResult : Result
+public sealed class ValidationResult : Result, IValidationResult
 {
     public Error[] Errors { get; }
 
@@ -20,7 +29,7 @@ public sealed class ValidationResult : Result
 /// <summary>
 /// Generic validation result with value type.
 /// </summary>
-public sealed class ValidationResult<T> : Result<T>
+public sealed class ValidationResult<T> : Result<T>, IValidationResult
 {
     public Error[] Errors { get; }
 

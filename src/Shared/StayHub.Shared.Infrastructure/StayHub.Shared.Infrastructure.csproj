@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Shared.Infrastructure</RootNamespace>
+    <AssemblyName>StayHub.Shared.Infrastructure</AssemblyName>
+    <Description>Shared infrastructure — EF Core base DbContext, generic repository, interceptors (audit, soft-delete, domain events), and specification pattern.</Description>
+    <!-- CA1716: "Shared" in namespace — intentional root namespace -->
+    <NoWarn>CA1716</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Shared\StayHub.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

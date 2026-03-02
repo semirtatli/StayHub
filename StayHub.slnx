@@ -2,5 +2,6 @@
   <Folder Name="/src/" />
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/StayHub.Shared/StayHub.Shared.csproj" />
+    <Project Path="src/Shared/StayHub.Shared.Infrastructure/StayHub.Shared.Infrastructure.csproj" />
   </Folder>
 </Solution>

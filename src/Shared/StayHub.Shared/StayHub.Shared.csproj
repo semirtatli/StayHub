@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Shared</RootNamespace>
+    <AssemblyName>StayHub.Shared</AssemblyName>
+    <Description>Shared kernel library for StayHub microservices — base entities, value objects, CQRS abstractions, and common patterns.</Description>
+    <!-- CA1716: "Shared" in namespace flagged as reserved keyword — intentional root namespace -->
+    <!-- CA1000: Static members in generic types — standard factory method pattern (Result, PagedList) -->
+    <!-- CA1716: "Error" type name — standard Result pattern naming convention -->
+    <NoWarn>CA1716;CA1000</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

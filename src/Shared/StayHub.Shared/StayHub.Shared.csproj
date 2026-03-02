@@ -7,7 +7,10 @@
     <!-- CA1716: "Shared" in namespace flagged as reserved keyword — intentional root namespace -->
     <!-- CA1000: Static members in generic types — standard factory method pattern (Result, PagedList) -->
     <!-- CA1716: "Error" type name — standard Result pattern naming convention -->
-    <NoWarn>CA1716;CA1000</NoWarn>
+    <!-- CA1716: "Shared" namespace / "Error" type name — intentional naming conventions -->
+    <!-- CA1000: Static factory methods in generic types — standard Result/PagedList pattern -->
+    <!-- CA1848/CA1873: LoggerMessage delegates — pipeline behaviors run once per request, overhead negligible -->
+    <NoWarn>CA1716;CA1000;CA1848;CA1873</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

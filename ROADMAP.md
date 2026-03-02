@@ -37,7 +37,7 @@
 | 10 | Identity Service scaffold | ✅ | 4-layer Clean Architecture projects, EF Core + Identity dbcontext, database design |
 | 11 | User registration | ✅ | Register command/handler, FluentValidation, password policy, domain events |
 | 12 | Authentication (Login/JWT) | ✅ | JWT generation, refresh token rotation, secure cookie options |
-| 13 | Role management | ⬚ | Guest/HotelOwner/Admin roles, role assignment, authorization policies |
+| 13 | Role management | ✅ | Guest/HotelOwner/Admin roles, role assignment, authorization policies |
 | 14 | Profile management | ⬚ | Update profile, change password, avatar upload |
 | 15 | Email verification | ⬚ | Confirmation token flow, integration event to Notification Service |
 

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Hotel.Api</RootNamespace>
+    <AssemblyName>StayHub.Services.Hotel.Api</AssemblyName>
+    <Description>Hotel Service API layer — controllers, middleware, and host configuration.</Description>
+    <!-- CA1848/CA1873: Logger message delegates in middleware — acceptable overhead -->
+    <NoWarn>CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Hotel.Application\StayHub.Services.Hotel.Application.csproj" />
+    <ProjectReference Include="..\StayHub.Services.Hotel.Infrastructure\StayHub.Services.Hotel.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+</Project>

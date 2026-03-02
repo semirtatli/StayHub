@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Hotel.Domain</RootNamespace>
+    <AssemblyName>StayHub.Services.Hotel.Domain</AssemblyName>
+    <Description>Hotel Service domain layer — aggregates, entities, value objects, domain events, and repository interfaces.</Description>
+    <!-- CA1720: "Single"/"Double" enum members match .NET type names — these are standard hotel room types -->
+    <NoWarn>CA1720</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared\StayHub.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

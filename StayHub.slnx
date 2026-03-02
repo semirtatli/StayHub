@@ -14,4 +14,10 @@
     <Project Path="src/Services/Identity/StayHub.Services.Identity.Infrastructure/StayHub.Services.Identity.Infrastructure.csproj" />
     <Project Path="src/Services/Identity/StayHub.Services.Identity.Api/StayHub.Services.Identity.Api.csproj" />
   </Folder>
+  <Folder Name="/src/Services/Hotel/">
+    <Project Path="src/Services/Hotel/StayHub.Services.Hotel.Domain/StayHub.Services.Hotel.Domain.csproj" />
+    <Project Path="src/Services/Hotel/StayHub.Services.Hotel.Application/StayHub.Services.Hotel.Application.csproj" />
+    <Project Path="src/Services/Hotel/StayHub.Services.Hotel.Infrastructure/StayHub.Services.Hotel.Infrastructure.csproj" />
+    <Project Path="src/Services/Hotel/StayHub.Services.Hotel.Api/StayHub.Services.Hotel.Api.csproj" />
+  </Folder>
 </Solution>

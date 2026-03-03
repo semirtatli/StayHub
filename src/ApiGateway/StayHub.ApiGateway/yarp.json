@@ -1,92 +1,68 @@
 {
-  // =====================================================
-  // YARP Reverse Proxy — Route & Cluster Configuration
-  // =====================================================
-  // Routes: URL patterns that map incoming requests to clusters
-  // Clusters: Groups of backend service instances
-  //
-  // All microservice traffic enters through the gateway (port 5000)
-  // and is routed to the appropriate backend service.
-  // =====================================================
-
   "ReverseProxy": {
     "Routes": {
 
-      // ── Identity Service (/api/identity/*) ──────────
+      "auth-route": {
+        "ClusterId": "identity-cluster",
+        "Match": {
+          "Path": "/api/auth/{**catch-all}"
+        }
+      },
+
       "identity-route": {
         "ClusterId": "identity-cluster",
         "Match": {
           "Path": "/api/identity/{**catch-all}"
-        },
-        "Transforms": [
-          { "PathRemovePrefix": "/api/identity" }
-        ]
+        }
       },
 
-      // ── Hotel Service (/api/hotels/*) ───────────────
-      "hotel-route": {
+      "identity-users-route": {
+        "ClusterId": "identity-cluster",
+        "Match": {
+          "Path": "/api/users/{**catch-all}"
+        }
+      },
+
+      "hotels-route": {
         "ClusterId": "hotel-cluster",
         "Match": {
           "Path": "/api/hotels/{**catch-all}"
-        },
-        "Transforms": [
-          { "PathRemovePrefix": "/api/hotels" }
-        ]
+        }
       },
 
-      // ── Booking Service (/api/bookings/*) ───────────
-      "booking-route": {
+      "bookings-route": {
         "ClusterId": "booking-cluster",
         "Match": {
           "Path": "/api/bookings/{**catch-all}"
-        },
-        "Transforms": [
-          { "PathRemovePrefix": "/api/bookings" }
-        ]
+        }
       },
 
-      // ── Payment Service (/api/payments/*) ───────────
-      "payment-route": {
+      "payments-route": {
         "ClusterId": "payment-cluster",
         "Match": {
           "Path": "/api/payments/{**catch-all}"
-        },
-        "Transforms": [
-          { "PathRemovePrefix": "/api/payments" }
-        ]
+        }
       },
 
-      // ── Review Service (/api/reviews/*) ─────────────
-      "review-route": {
+      "reviews-route": {
         "ClusterId": "review-cluster",
         "Match": {
           "Path": "/api/reviews/{**catch-all}"
-        },
-        "Transforms": [
-          { "PathRemovePrefix": "/api/reviews" }
-        ]
+        }
       },
 
-      // ── Notification Service (/api/notifications/*) ─
-      "notification-route": {
+      "notifications-route": {
         "ClusterId": "notification-cluster",
         "Match": {
           "Path": "/api/notifications/{**catch-all}"
-        },
-        "Transforms": [
-          { "PathRemovePrefix": "/api/notifications" }
-        ]
+        }
       },
 
-      // ── Analytics Service (/api/analytics/*) ────────
       "analytics-route": {
         "ClusterId": "analytics-cluster",
         "Match": {
           "Path": "/api/analytics/{**catch-all}"
-        },
-        "Transforms": [
-          { "PathRemovePrefix": "/api/analytics" }
-        ]
+        }
       }
     },
 
@@ -95,15 +71,7 @@
       "identity-cluster": {
         "Destinations": {
           "identity-primary": {
-            "Address": "https://localhost:5101"
-          }
-        },
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
+            "Address": "http://identity-api:8080"
           }
         }
       },
@@ -111,15 +79,7 @@
       "hotel-cluster": {
         "Destinations": {
           "hotel-primary": {
-            "Address": "https://localhost:5102"
-          }
-        },
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
+            "Address": "http://hotel-api:8080"
           }
         }
       },
@@ -127,15 +87,7 @@
       "booking-cluster": {
         "Destinations": {
           "booking-primary": {
-            "Address": "https://localhost:5103"
-          }
-        },
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
+            "Address": "http://booking-api:8080"
           }
         }
       },
@@ -143,15 +95,7 @@
       "payment-cluster": {
         "Destinations": {
           "payment-primary": {
-            "Address": "https://localhost:5104"
-          }
-        },
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
+            "Address": "http://payment-api:8080"
           }
         }
       },
@@ -159,15 +103,7 @@
       "review-cluster": {
         "Destinations": {
           "review-primary": {
-            "Address": "https://localhost:5105"
-          }
-        },
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
+            "Address": "http://review-api:8080"
           }
         }
       },
@@ -175,15 +111,7 @@
       "notification-cluster": {
         "Destinations": {
           "notification-primary": {
-            "Address": "https://localhost:5106"
-          }
-        },
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
+            "Address": "http://notification-api:8080"
           }
         }
       },
@@ -191,15 +119,7 @@
       "analytics-cluster": {
         "Destinations": {
           "analytics-primary": {
-            "Address": "https://localhost:5107"
-          }
-        },
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
+            "Address": "http://analytics-api:8080"
           }
         }
       }

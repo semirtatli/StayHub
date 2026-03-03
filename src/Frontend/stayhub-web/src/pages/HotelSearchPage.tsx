@@ -26,7 +26,7 @@ export function HotelSearchPage() {
 
   const { data, isLoading } = useQuery<PaginatedResult<HotelSummary>>({
     queryKey: ['hotels', city, minPrice, maxPrice, minRating, page],
-    queryFn: () => api.get<PaginatedResult<HotelSummary>>(`/api/hotels?${queryString}`).then((r) => r.data),
+    queryFn: () => api.get<PaginatedResult<HotelSummary>>(`/hotels/search?${queryString}`).then((r) => r.data),
   });
 
   useEffect(() => {

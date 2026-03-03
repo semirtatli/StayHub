@@ -12,11 +12,11 @@ export function MyBookingsPage() {
 
   const { data: bookings, isLoading } = useQuery<Booking[]>({
     queryKey: ['my-bookings'],
-    queryFn: () => api.get<Booking[]>('/api/bookings/my').then((r) => r.data),
+    queryFn: () => api.get<Booking[]>('/bookings/my').then((r) => r.data),
   });
 
   const cancelBooking = useMutation({
-    mutationFn: (bookingId: string) => api.post(`/api/bookings/${bookingId}/cancel`),
+    mutationFn: (bookingId: string) => api.post(`/bookings/${bookingId}/cancel`),
     onSuccess: () => {
       toast.success('Booking cancelled.');
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });

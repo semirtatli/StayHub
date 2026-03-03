@@ -11,7 +11,7 @@ export function BookingConfirmationPage() {
 
   const { data: booking, isLoading } = useQuery<Booking>({
     queryKey: ['booking', bookingId],
-    queryFn: () => api.get<Booking>(`/api/bookings/${bookingId}`).then((r) => r.data),
+    queryFn: () => api.get<Booking>(`/bookings/${bookingId}`).then((r) => r.data),
     enabled: !!bookingId,
   });
 

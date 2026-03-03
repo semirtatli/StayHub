@@ -19,12 +19,12 @@ import { Card, CardContent, Skeleton } from '@/components/ui';
 export function AdminDashboardPage() {
   const { data: kpis, isLoading: kpisLoading } = useQuery<DashboardKpi>({
     queryKey: ['admin-kpis'],
-    queryFn: () => api.get<DashboardKpi>('/api/analytics/dashboard').then((r) => r.data),
+    queryFn: () => api.get<DashboardKpi>('/analytics/dashboard').then((r) => r.data),
   });
 
   const { data: revenue, isLoading: revenueLoading } = useQuery<RevenueDataPoint[]>({
     queryKey: ['admin-revenue'],
-    queryFn: () => api.get<RevenueDataPoint[]>('/api/analytics/revenue?period=Monthly&months=12').then((r) => r.data),
+    queryFn: () => api.get<RevenueDataPoint[]>('/analytics/revenue?period=Monthly&months=12').then((r) => r.data),
   });
 
   const stats = [

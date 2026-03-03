@@ -25,7 +25,7 @@ export function OwnerHotelFormPage() {
 
   const { data: hotel } = useQuery<Hotel>({
     queryKey: ['hotel', id],
-    queryFn: () => api.get<Hotel>(`/api/hotels/${id}`).then((r) => r.data),
+    queryFn: () => api.get<Hotel>(`/hotels/${id}`).then((r) => r.data),
     enabled: isEdit,
   });
 
@@ -47,8 +47,8 @@ export function OwnerHotelFormPage() {
 
   const saveMutation = useMutation({
     mutationFn: (data: typeof form) => {
-      if (isEdit) return api.put<Hotel>(`/api/hotels/${id}`, data).then((r) => r.data);
-      return api.post<Hotel>('/api/hotels', data).then((r) => r.data);
+      if (isEdit) return api.put<Hotel>(`/hotels/${id}`, data).then((r) => r.data);
+      return api.post<Hotel>('/hotels', data).then((r) => r.data);
     },
     onSuccess: () => {
       toast.success(isEdit ? 'Hotel updated.' : 'Hotel created.');

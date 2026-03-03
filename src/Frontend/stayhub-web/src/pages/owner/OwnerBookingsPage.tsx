@@ -11,12 +11,12 @@ export function OwnerBookingsPage() {
 
   const { data: bookings, isLoading } = useQuery<Booking[]>({
     queryKey: ['owner-bookings'],
-    queryFn: () => api.get<Booking[]>('/api/bookings/owner').then((r) => r.data),
+    queryFn: () => api.get<Booking[]>('/bookings/owner').then((r) => r.data),
   });
 
   const updateStatus = useMutation({
     mutationFn: ({ bookingId, action }: { bookingId: string; action: string }) =>
-      api.post(`/api/bookings/${bookingId}/${action}`),
+      api.post(`/bookings/${bookingId}/${action}`),
     onSuccess: () => {
       toast.success('Booking updated.');
       queryClient.invalidateQueries({ queryKey: ['owner-bookings'] });

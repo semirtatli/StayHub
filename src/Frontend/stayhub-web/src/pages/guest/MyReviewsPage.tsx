@@ -18,15 +18,15 @@ export function MyReviewsPage() {
 
   const { data: reviews, isLoading } = useQuery<Review[]>({
     queryKey: ['my-reviews'],
-    queryFn: () => api.get<Review[]>('/api/reviews/my').then((r) => r.data),
+    queryFn: () => api.get<Review[]>('/reviews/my').then((r) => r.data),
   });
 
   const submitReview = useMutation({
     mutationFn: (data: { title: string; comment: string; overallRating: number; reviewId?: string }) => {
       if (data.reviewId) {
-        return api.put(`/api/reviews/${data.reviewId}`, data);
+        return api.put(`/reviews/${data.reviewId}`, data);
       }
-      return api.post('/api/reviews', data);
+      return api.post('/reviews', data);
     },
     onSuccess: () => {
       toast.success(editReview ? 'Review updated.' : 'Review submitted.');
@@ -37,7 +37,7 @@ export function MyReviewsPage() {
   });
 
   const deleteReview = useMutation({
-    mutationFn: (reviewId: string) => api.delete(`/api/reviews/${reviewId}`),
+    mutationFn: (reviewId: string) => api.delete(`/reviews/${reviewId}`),
     onSuccess: () => {
       toast.success('Review deleted.');
       queryClient.invalidateQueries({ queryKey: ['my-reviews'] });

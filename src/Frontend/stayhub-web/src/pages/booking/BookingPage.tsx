@@ -21,13 +21,13 @@ export function BookingPage() {
 
   const { data: hotel } = useQuery<Hotel>({
     queryKey: ['hotel', hotelId],
-    queryFn: () => api.get<Hotel>(`/api/hotels/${hotelId}`).then((r) => r.data),
+    queryFn: () => api.get<Hotel>(`/hotels/${hotelId}`).then((r) => r.data),
     enabled: !!hotelId,
   });
 
   const { data: rooms } = useQuery<Room[]>({
     queryKey: ['hotel-rooms', hotelId],
-    queryFn: () => api.get<Room[]>(`/api/hotels/${hotelId}/rooms`).then((r) => r.data),
+    queryFn: () => api.get<Room[]>(`/hotels/${hotelId}/rooms`).then((r) => r.data),
     enabled: !!hotelId,
   });
 
@@ -37,7 +37,7 @@ export function BookingPage() {
 
   const createBooking = useMutation({
     mutationFn: (data: { hotelId: string; roomId: string; checkInDate: string; checkOutDate: string; numberOfGuests: number }) =>
-      api.post<Booking>('/api/bookings', data).then((r) => r.data),
+      api.post<Booking>('/bookings', data).then((r) => r.data),
     onSuccess: (data) => {
       toast.success('Booking created successfully!');
       navigate(`/booking/confirmation/${data.id}`);

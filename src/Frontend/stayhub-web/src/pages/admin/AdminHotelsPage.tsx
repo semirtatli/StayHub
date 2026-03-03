@@ -12,11 +12,11 @@ export function AdminHotelsPage() {
 
   const { data: hotels, isLoading } = useQuery<HotelSummary[]>({
     queryKey: ['admin-hotels'],
-    queryFn: () => api.get<HotelSummary[]>('/api/hotels/all').then((r) => r.data),
+    queryFn: () => api.get<HotelSummary[]>('/hotels/all').then((r) => r.data),
   });
 
   const deleteHotel = useMutation({
-    mutationFn: (hotelId: string) => api.delete(`/api/hotels/${hotelId}`),
+    mutationFn: (hotelId: string) => api.delete(`/hotels/${hotelId}`),
     onSuccess: () => {
       toast.success('Hotel deleted.');
       queryClient.invalidateQueries({ queryKey: ['admin-hotels'] });

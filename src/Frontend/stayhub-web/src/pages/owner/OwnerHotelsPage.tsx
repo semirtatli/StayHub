@@ -8,7 +8,7 @@ import { Button, Card, CardContent, HotelCardSkeleton } from '@/components/ui';
 export function OwnerHotelsPage() {
   const { data: hotels, isLoading } = useQuery<HotelSummary[]>({
     queryKey: ['owner-hotels'],
-    queryFn: () => api.get<HotelSummary[]>('/api/hotels/my').then((r) => r.data),
+    queryFn: () => api.get<HotelSummary[]>('/hotels/my').then((r) => r.data),
   });
 
   return (

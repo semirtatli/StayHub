@@ -4,6 +4,7 @@ using StayHub.Services.Hotel.Api.Middleware;
 using StayHub.Services.Hotel.Application;
 using StayHub.Services.Hotel.Infrastructure;
 using StayHub.Services.Hotel.Infrastructure.Persistence;
+using StayHub.Services.Hotel.Infrastructure.Seed;
 using StayHub.Shared.Web;
 using StayHub.Shared.Web.Versioning;
 using StayHub.Shared.Web.Middleware;
@@ -113,12 +114,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ── Database migration (development only) ────────────────────────────────
+// ── Database migration & seeding (development only) ──────────────────────
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
+
+    // Seed demo hotels
+    await HotelSeeder.SeedAsync(app.Services);
 }
 
 // ── Middleware pipeline ──────────────────────────────────────────────────

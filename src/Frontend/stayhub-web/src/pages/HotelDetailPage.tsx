@@ -14,19 +14,19 @@ export function HotelDetailPage() {
 
   const { data: hotel, isLoading } = useQuery<Hotel>({
     queryKey: ['hotel', id],
-    queryFn: () => api.get<Hotel>(`/api/hotels/${id}`).then((r) => r.data),
+    queryFn: () => api.get<Hotel>(`/hotels/${id}`).then((r) => r.data),
     enabled: !!id,
   });
 
   const { data: rooms } = useQuery<Room[]>({
     queryKey: ['hotel-rooms', id],
-    queryFn: () => api.get<Room[]>(`/api/hotels/${id}/rooms`).then((r) => r.data),
+    queryFn: () => api.get<Room[]>(`/hotels/${id}/rooms`).then((r) => r.data),
     enabled: !!id,
   });
 
   const { data: reviews } = useQuery<Review[]>({
     queryKey: ['hotel-reviews', id],
-    queryFn: () => api.get<Review[]>(`/api/reviews/hotel/${id}`).then((r) => r.data),
+    queryFn: () => api.get<Review[]>(`/reviews/hotel/${id}`).then((r) => r.data),
     enabled: !!id,
   });
 

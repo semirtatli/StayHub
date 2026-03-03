@@ -38,6 +38,8 @@ export function RegisterPage() {
         lastName: form.lastName,
         email: form.email,
         password: form.password,
+        confirmPassword: form.confirmPassword,
+        role: 'Guest',
       });
       navigate('/verify-email', { state: { email: form.email } });
     } catch {

@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-api
+  namespace: stayhub
+  labels:
+    app: notification-api
+    app.kubernetes.io/name: notification-api
+    app.kubernetes.io/part-of: stayhub
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: notification-api
+  template:
+    metadata:
+      labels:
+        app: notification-api
+        app.kubernetes.io/name: notification-api
+        app.kubernetes.io/part-of: stayhub
+    spec:
+      containers:
+        - name: notification-api
+          image: stayhub/notification-api:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          envFrom:
+            - configMapRef:
+                name: stayhub-config
+            - secretRef:
+                name: stayhub-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-api
+  namespace: stayhub
+  labels:
+    app: notification-api
+    app.kubernetes.io/name: notification-api
+    app.kubernetes.io/part-of: stayhub
+spec:
+  type: ClusterIP
+  selector:
+    app: notification-api
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP

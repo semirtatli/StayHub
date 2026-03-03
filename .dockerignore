@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+**/node_modules/
+**/bin/
+**/obj/
+
+# Build outputs
+dist/
+**/publish/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test results
+TestResults/
+coverage/
+
+# Docker
+docker-compose.override.yml

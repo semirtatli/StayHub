@@ -113,19 +113,19 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 55 | Unit tests | ⬚ | Domain logic, command handlers (xUnit + NSubstitute + FluentAssertions) |
-| 56 | Integration tests | ⬚ | API tests with WebApplicationFactory + Testcontainers |
-| 57 | Frontend tests | ⬚ | Component tests (Vitest + RTL), E2E (Playwright) |
+| 55 | Unit tests | ✅ | Domain logic, command handlers (xUnit + NSubstitute + FluentAssertions) |
+| 56 | Integration tests | ✅ | API tests with WebApplicationFactory + Testcontainers |
+| 57 | Frontend tests | ✅ | Component tests (Vitest + RTL), E2E (Playwright) |
 
 ## Phase 12: Kubernetes & Deployment
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 58 | Dockerfiles | ⬚ | Multi-stage builds per service + frontend (Nginx) |
-| 59 | Helm charts | ⬚ | K8s manifests: Deployments, Services, Ingress, ConfigMaps, Secrets, HPA |
-| 60 | AKS infrastructure | ⬚ | Bicep templates: AKS, Azure SQL, Service Bus, Key Vault, ACR |
-| 61 | GitHub Actions CI/CD | ⬚ | Build→Test→Docker push→Helm deploy, per-service pipelines |
-| 62 | Production deployment | ⬚ | Final deploy, TLS, DNS, smoke tests, monitoring |
+| 58 | Dockerfiles | ✅ | Multi-stage builds per service + frontend (Nginx) |
+| 59 | Helm charts | ✅ | K8s manifests: Deployments, Services, Ingress, ConfigMaps, Secrets, HPA |
+| 60 | AKS infrastructure | ✅ | Bicep templates: AKS, Azure SQL, Service Bus, Key Vault, ACR |
+| 61 | GitHub Actions CI/CD | ✅ | Build→Test→Docker push→Helm deploy, per-service pipelines |
+| 62 | Production deployment | ✅ | Final deploy, TLS, DNS, smoke tests, monitoring |
 
 ---
 

@@ -5,7 +5,9 @@ using StayHub.Services.Hotel.Application.DTOs;
 using StayHub.Services.Hotel.Application.Features.CreateHotel;
 using StayHub.Services.Hotel.Application.Features.GetHotelById;
 using StayHub.Services.Hotel.Application.Features.GetHotelsByOwner;
+using StayHub.Services.Hotel.Application.Features.SearchHotels;
 using StayHub.Services.Hotel.Application.Features.UpdateHotel;
+using StayHub.Shared.Pagination;
 
 namespace StayHub.Services.Hotel.Api.Controllers;
 
@@ -104,6 +106,47 @@ public sealed class HotelsController : ApiController
     }
 
     /// <summary>
+    /// Search active hotels with dynamic filtering, geo-distance, and pagination.
+    /// Public endpoint — no authentication required.
+    ///
+    /// Supports:
+    /// - Free-text search (?q=term) on name and description
+    /// - Filters: city, country, starRating range, price range, roomType
+    /// - Geo-distance: latitude + longitude + radiusKm (bounding-box SQL + Haversine)
+    /// - Sorting: name, starRating, price, createdAt (asc/desc)
+    /// - Pagination: page (default 1), pageSize (default 20, max 100)
+    /// </summary>
+    [HttpGet("search")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(PagedList<HotelSearchResultDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Search(
+        [FromQuery] SearchHotelsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var query = new SearchHotelsQuery(
+            request.Q,
+            request.City,
+            request.Country,
+            request.MinStarRating,
+            request.MaxStarRating,
+            request.MinPrice,
+            request.MaxPrice,
+            request.RoomType,
+            request.Latitude,
+            request.Longitude,
+            request.RadiusKm,
+            request.SortBy,
+            request.SortDescending ?? false,
+            request.Page ?? 1,
+            request.PageSize ?? 20);
+
+        var result = await Mediator.Send(query, cancellationToken);
+
+        return HandleResult(result);
+    }
+
+    /// <summary>
     /// Get hotel details by ID. Public endpoint — no authentication required.
     /// Returns full hotel detail including rooms.
     /// </summary>
@@ -184,3 +227,56 @@ public sealed record UpdateHotelRequest(
     string CheckOutTime,
     double? Latitude,
     double? Longitude);
+
+/// <summary>
+/// Query-string parameters for hotel search.
+/// All fields are optional — omitting a filter means "no restriction".
+/// </summary>
+public sealed record SearchHotelsRequest
+{
+    /// <summary>Free-text search term (matched against name and description).</summary>
+    [FromQuery(Name = "q")]
+    public string? Q { get; init; }
+
+    /// <summary>Filter by city (exact match).</summary>
+    public string? City { get; init; }
+
+    /// <summary>Filter by country (exact match).</summary>
+    public string? Country { get; init; }
+
+    /// <summary>Minimum star rating (1–5).</summary>
+    public int? MinStarRating { get; init; }
+
+    /// <summary>Maximum star rating (1–5).</summary>
+    public int? MaxStarRating { get; init; }
+
+    /// <summary>Minimum room base price.</summary>
+    public decimal? MinPrice { get; init; }
+
+    /// <summary>Maximum room base price.</summary>
+    public decimal? MaxPrice { get; init; }
+
+    /// <summary>Filter by room type (e.g., Single, Double, Suite).</summary>
+    public string? RoomType { get; init; }
+
+    /// <summary>Search center latitude (requires Longitude and RadiusKm).</summary>
+    public double? Latitude { get; init; }
+
+    /// <summary>Search center longitude (requires Latitude and RadiusKm).</summary>
+    public double? Longitude { get; init; }
+
+    /// <summary>Maximum distance in km from search center (max 500).</summary>
+    public double? RadiusKm { get; init; }
+
+    /// <summary>Sort field: name, starRating, price, createdAt. Default: createdAt.</summary>
+    public string? SortBy { get; init; }
+
+    /// <summary>Sort direction. True = descending. Default: true.</summary>
+    public bool? SortDescending { get; init; }
+
+    /// <summary>Page number (1-based). Default: 1.</summary>
+    public int? Page { get; init; }
+
+    /// <summary>Items per page (1–100). Default: 20.</summary>
+    public int? PageSize { get; init; }
+}

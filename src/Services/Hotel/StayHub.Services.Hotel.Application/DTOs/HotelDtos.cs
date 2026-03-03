@@ -87,6 +87,26 @@ public sealed record RoomDto(
     IReadOnlyList<string> PhotoUrls);
 
 /// <summary>
+/// Search result DTO — extends summary with optional geo-distance.
+/// Returned by the search engine for paginated public search results.
+/// </summary>
+public sealed record HotelSearchResultDto(
+    Guid Id,
+    string Name,
+    string Description,
+    int StarRating,
+    string City,
+    string Country,
+    string Status,
+    string? CoverImageUrl,
+    int RoomCount,
+    decimal? MinPrice,
+    string? Currency,
+    int PhotoCount,
+    double? DistanceKm,
+    DateTime CreatedAt);
+
+/// <summary>
 /// Detailed hotel DTO that includes rooms — used for single hotel detail view.
 /// </summary>
 public sealed record HotelDetailDto(

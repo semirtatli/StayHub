@@ -61,6 +61,38 @@ public static class HotelMappings
         hotel.PhotoUrls.Count,
         hotel.CreatedAt);
 
+    /// <summary>
+    /// Maps to search result DTO, calculating Haversine distance if a search location is provided.
+    /// </summary>
+    public static HotelSearchResultDto ToSearchResultDto(
+        HotelEntity hotel,
+        Domain.ValueObjects.GeoLocation? searchLocation)
+    {
+        double? distanceKm = null;
+        if (searchLocation is not null && hotel.Location is not null)
+        {
+            distanceKm = Math.Round(hotel.Location.DistanceToKm(searchLocation), 2);
+        }
+
+        return new HotelSearchResultDto(
+            hotel.Id,
+            hotel.Name,
+            hotel.Description.Length > 200
+                ? string.Concat(hotel.Description.AsSpan(0, 200), "...")
+                : hotel.Description,
+            hotel.StarRating,
+            hotel.Address.City,
+            hotel.Address.Country,
+            hotel.Status.ToString(),
+            hotel.CoverImageUrl,
+            hotel.Rooms.Count,
+            hotel.Rooms.Count > 0 ? hotel.Rooms.Where(r => r.IsActive).Select(r => r.BasePrice.Amount).DefaultIfEmpty(0).Min() : null,
+            hotel.Rooms.Count > 0 ? hotel.Rooms.Where(r => r.IsActive).Select(r => r.BasePrice.Currency).FirstOrDefault() : null,
+            hotel.PhotoUrls.Count,
+            distanceKm,
+            hotel.CreatedAt);
+    }
+
     public static RoomDto ToRoomDto(Room room) => new(
         room.Id,
         room.HotelId,

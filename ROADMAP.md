@@ -101,16 +101,7 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 42 | React scaffold | ⬚ | Vite + TypeScript + React Router v6 + Tailwind + Axios + React Query + i18next |
-| 43 | Auth flow | ⬚ | Login, Register, Email verify UI; JWT interceptor with silent refresh |
-| 44 | Hotel browsing | ⬚ | Home page, search with filters, hotel detail with gallery/rooms/reviews |
-| 45 | Booking flow | ⬚ | Date picker→room selection→guest info→Stripe Elements→confirmation |
-| 46 | Guest dashboard | ⬚ | My bookings (with status), profile, my reviews |
-| 47 | Hotel Owner panel | ⬚ | My hotels, add/edit wizard, room management, booking calendar, review responses |
-| 48 | Admin panel | ⬚ | User management, hotel approval queue, analytics charts (Recharts) |
-| 49 | Localization | ⬚ | react-i18next: English + Turkish, date/currency formatting |
-| 50 | Error handling & UX | ⬚ | Error boundaries, loading skeletons, toast notifications, 404/403 pages |
-| 51 | Responsive polish | ⬚ | Mobile navigation, touch-friendly booking flow, lazy loading |
+| 42-51 | `feat: add React frontend with Vite, Tailwind, routing, auth, and all pages.` | ✅ | Vite 7 + React 19 + TypeScript + Tailwind v4 + React Router 7 + React Query + Axios + Recharts. Full scaffold: layouts (Main, Admin), auth (login, register, verify-email), public (home, search, detail), booking flow (dates→room→confirm), guest (my-bookings, profile, reviews), owner (hotels, form, bookings), admin (dashboard with charts, users, hotels), error pages (404, 403), UI component library (Button, Input, Card, Modal, StarRating, Skeleton) |
 
 ## Phase 10: Cross-Cutting & Observability
 

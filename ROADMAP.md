@@ -68,10 +68,10 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 29 | Payment Service scaffold | ⬚ | Domain model, Stripe abstraction (Strategy pattern) |
-| 30 | Stripe PaymentIntent | ⬚ | Create payment, handle 3D Secure, webhook verification |
-| 31 | Payment lifecycle | ⬚ | Pending→Completed→Refunded, link to booking via integration events |
-| 32 | Refund processing | ⬚ | Full/partial refunds via Stripe, triggers booking state update |
+| 29 | Payment Service scaffold | ✅ | Domain model, Stripe abstraction (Strategy pattern) |
+| 30 | Stripe PaymentIntent | ✅ | Create payment, handle 3D Secure, webhook verification |
+| 31 | Payment lifecycle | ✅ | Pending→Completed→Refunded, link to booking via integration events |
+| 32 | Refund processing | ✅ | Full/partial refunds via Stripe, triggers booking state update |
 
 ## Phase 6: Review Service
 

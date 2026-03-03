@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StayHub.Services.Booking.Application.Abstractions;
 using StayHub.Services.Booking.Domain.Repositories;
+using StayHub.Services.Booking.Infrastructure.ExternalServices;
 using StayHub.Services.Booking.Infrastructure.Persistence;
 using StayHub.Services.Booking.Infrastructure.Persistence.Repositories;
 using StayHub.Shared.Infrastructure;
@@ -47,6 +49,16 @@ public static class InfrastructureRegistration
 
         // ── Repositories ──
         services.AddScoped<IBookingRepository, BookingRepository>();
+
+        // ── External service clients ──
+        services.AddHttpClient<IHotelServiceClient, HotelServiceHttpClient>(client =>
+        {
+            var baseUrl = configuration["ExternalServices:HotelService:BaseUrl"]
+                ?? "http://localhost:5102";
+
+            client.BaseAddress = new Uri(baseUrl);
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
 
         return services;
     }

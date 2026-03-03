@@ -23,6 +23,7 @@ public static class HotelMappings
         hotel.CheckInTime.ToString("HH:mm", CultureInfo.InvariantCulture),
         hotel.CheckOutTime.ToString("HH:mm", CultureInfo.InvariantCulture),
         hotel.CoverImageUrl,
+        hotel.PhotoUrls.ToList(),
         hotel.Rooms.Count,
         hotel.CreatedAt,
         hotel.LastModifiedAt);
@@ -41,6 +42,7 @@ public static class HotelMappings
         hotel.CheckInTime.ToString("HH:mm", CultureInfo.InvariantCulture),
         hotel.CheckOutTime.ToString("HH:mm", CultureInfo.InvariantCulture),
         hotel.CoverImageUrl,
+        hotel.PhotoUrls.ToList(),
         hotel.Rooms.Select(ToRoomDto).ToList(),
         hotel.CreatedAt,
         hotel.LastModifiedAt);
@@ -56,6 +58,7 @@ public static class HotelMappings
         hotel.Rooms.Count,
         hotel.Rooms.Count > 0 ? hotel.Rooms.Min(r => r.BasePrice.Amount) : null,
         hotel.Rooms.Count > 0 ? hotel.Rooms[0].BasePrice.Currency : null,
+        hotel.PhotoUrls.Count,
         hotel.CreatedAt);
 
     public static RoomDto ToRoomDto(Room room) => new(

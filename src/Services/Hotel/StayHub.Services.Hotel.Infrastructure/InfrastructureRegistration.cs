@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StayHub.Services.Hotel.Application.Abstractions;
 using StayHub.Services.Hotel.Domain.Repositories;
 using StayHub.Services.Hotel.Infrastructure.Persistence;
 using StayHub.Services.Hotel.Infrastructure.Persistence.Repositories;
+using StayHub.Services.Hotel.Infrastructure.Storage;
 using StayHub.Shared.Infrastructure;
 using StayHub.Shared.Infrastructure.Interceptors;
 using StayHub.Shared.Interfaces;
@@ -47,6 +49,9 @@ public static class InfrastructureRegistration
 
         // ── Repositories ──
         services.AddScoped<IHotelRepository, HotelRepository>();
+
+        // ── File storage ──
+        services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
         return services;
     }

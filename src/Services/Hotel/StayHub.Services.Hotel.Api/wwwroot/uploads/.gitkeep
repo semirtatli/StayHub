@@ -1,0 +1,2 @@
+This directory is served by the static file middleware.
+Uploaded hotel/room photos are stored in uploads/ subdirectory.

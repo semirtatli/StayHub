@@ -122,7 +122,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+// Serve uploaded photos from wwwroot/uploads/
+app.UseStaticFiles();
 app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
 

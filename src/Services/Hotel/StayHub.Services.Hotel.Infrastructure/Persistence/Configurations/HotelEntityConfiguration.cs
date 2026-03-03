@@ -53,6 +53,18 @@ public sealed class HotelEntityConfiguration : BaseEntityConfiguration<HotelEnti
         builder.Property(h => h.CoverImageUrl)
             .HasMaxLength(2048);
 
+        // ── Photo gallery (JSON column) ────────────────────────────────
+
+        builder.Property(h => h.PhotoUrls)
+            .HasConversion(
+                v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
+                v => System.Text.Json.JsonSerializer.Deserialize<List<string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<string>())
+            .HasColumnType("nvarchar(max)")
+            .HasColumnName("PhotoUrls");
+
+        builder.Navigation(h => h.PhotoUrls)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
         // ── Owned value object: Address ─────────────────────────────────
 
         builder.OwnsOne(h => h.Address, addressBuilder =>

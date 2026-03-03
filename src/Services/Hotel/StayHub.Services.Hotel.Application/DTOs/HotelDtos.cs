@@ -20,6 +20,7 @@ public sealed record HotelDto(
     string CheckInTime,
     string CheckOutTime,
     string? CoverImageUrl,
+    IReadOnlyList<string> PhotoUrls,
     int RoomCount,
     DateTime CreatedAt,
     DateTime? LastModifiedAt);
@@ -27,7 +28,7 @@ public sealed record HotelDto(
 /// <summary>
 /// Hotel summary for list/search results — excludes detailed fields for performance.
 /// </summary>
-public sealed record HotelSummaryDto(
+ public sealed record HotelSummaryDto(
     Guid Id,
     string Name,
     int StarRating,
@@ -38,6 +39,7 @@ public sealed record HotelSummaryDto(
     int RoomCount,
     decimal? MinPrice,
     string? Currency,
+    int PhotoCount,
     DateTime CreatedAt);
 
 /// <summary>
@@ -101,6 +103,7 @@ public sealed record HotelDetailDto(
     string CheckInTime,
     string CheckOutTime,
     string? CoverImageUrl,
+    IReadOnlyList<string> PhotoUrls,
     IReadOnlyList<RoomDto> Rooms,
     DateTime CreatedAt,
     DateTime? LastModifiedAt);

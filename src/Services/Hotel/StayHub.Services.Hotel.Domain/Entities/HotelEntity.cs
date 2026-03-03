@@ -22,6 +22,7 @@ namespace StayHub.Services.Hotel.Domain.Entities;
 public sealed class HotelEntity : AggregateRoot
 {
     private readonly List<Room> _rooms = [];
+    private readonly List<string> _photoUrls = [];
 
     public string Name { get; private set; }
     public string Description { get; private set; }
@@ -71,6 +72,12 @@ public sealed class HotelEntity : AggregateRoot
     /// Primary photo URL for search results / hotel card.
     /// </summary>
     public string? CoverImageUrl { get; private set; }
+
+    /// <summary>
+    /// Hotel photo gallery — ordered list of photo URLs.
+    /// First photo is typically used as the cover if CoverImageUrl is not set.
+    /// </summary>
+    public IReadOnlyList<string> PhotoUrls => _photoUrls.AsReadOnly();
 
     /// <summary>
     /// Rooms belonging to this hotel. Managed through aggregate methods.
@@ -319,6 +326,51 @@ public sealed class HotelEntity : AggregateRoot
     public Room GetRoom(Guid roomId) =>
         _rooms.FirstOrDefault(r => r.Id == roomId)
             ?? throw new InvalidOperationException($"Room with ID '{roomId}' not found in this hotel.");
+
+    // ── Photo management ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Add a photo URL to the hotel gallery.
+    /// </summary>
+    public void AddPhotoUrl(string photoUrl)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(photoUrl);
+        if (!_photoUrls.Contains(photoUrl))
+        {
+            _photoUrls.Add(photoUrl);
+        }
+    }
+
+    /// <summary>
+    /// Remove a photo URL from the hotel gallery.
+    /// </summary>
+    public void RemovePhotoUrl(string photoUrl)
+    {
+        _photoUrls.Remove(photoUrl);
+    }
+
+    /// <summary>
+    /// Reorder hotel gallery photos. The provided list must contain
+    /// exactly the same URLs as the current gallery (no additions/removals).
+    /// </summary>
+    public void ReorderPhotos(IReadOnlyList<string> orderedUrls)
+    {
+        ArgumentNullException.ThrowIfNull(orderedUrls);
+
+        if (orderedUrls.Count != _photoUrls.Count)
+            throw new InvalidOperationException(
+                "Reorder must contain the same number of photos as the current gallery.");
+
+        var currentSet = new HashSet<string>(_photoUrls);
+        var newSet = new HashSet<string>(orderedUrls);
+
+        if (!currentSet.SetEquals(newSet))
+            throw new InvalidOperationException(
+                "Reorder must contain exactly the same photo URLs — no additions or removals.");
+
+        _photoUrls.Clear();
+        _photoUrls.AddRange(orderedUrls);
+    }
 
     // EF Core parameterless constructor
 #pragma warning disable CS8618

@@ -20,4 +20,10 @@
     <Project Path="src/Services/Hotel/StayHub.Services.Hotel.Infrastructure/StayHub.Services.Hotel.Infrastructure.csproj" />
     <Project Path="src/Services/Hotel/StayHub.Services.Hotel.Api/StayHub.Services.Hotel.Api.csproj" />
   </Folder>
+  <Folder Name="/src/Services/Booking/">
+    <Project Path="src/Services/Booking/StayHub.Services.Booking.Domain/StayHub.Services.Booking.Domain.csproj" />
+    <Project Path="src/Services/Booking/StayHub.Services.Booking.Application/StayHub.Services.Booking.Application.csproj" />
+    <Project Path="src/Services/Booking/StayHub.Services.Booking.Infrastructure/StayHub.Services.Booking.Infrastructure.csproj" />
+    <Project Path="src/Services/Booking/StayHub.Services.Booking.Api/StayHub.Services.Booking.Api.csproj" />
+  </Folder>
 </Solution>

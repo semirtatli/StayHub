@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Booking.Application</RootNamespace>
+    <AssemblyName>StayHub.Services.Booking.Application</AssemblyName>
+    <Description>Booking Service application layer — commands, queries, handlers, DTOs, and validators.</Description>
+    <!-- CA1848/CA1873: LoggerMessage delegates — acceptable in command handlers -->
+    <NoWarn>CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Booking.Domain\StayHub.Services.Booking.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Mapster" />
+  </ItemGroup>
+
+</Project>

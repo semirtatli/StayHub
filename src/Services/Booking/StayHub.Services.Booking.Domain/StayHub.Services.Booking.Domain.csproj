@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Booking.Domain</RootNamespace>
+    <AssemblyName>StayHub.Services.Booking.Domain</AssemblyName>
+    <Description>Booking Service domain layer — aggregates, entities, value objects, domain events, and repository interfaces.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared\StayHub.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

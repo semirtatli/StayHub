@@ -1,0 +1,10 @@
+<Project>
+  <!-- Import parent Directory.Build.props first -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Override settings for test projects -->
+  <PropertyGroup>
+    <!-- Allow underscores in test method names (standard convention: MethodName_Condition_Expected) -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+</Project>

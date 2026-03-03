@@ -107,9 +107,7 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 52 | Structured logging | ⬚ | Serilog→Seq (dev) / App Insights (prod), correlation IDs |
-| 53 | Resilience | ⬚ | Polly retry + circuit breaker on inter-service HTTP calls |
-| 54 | API documentation | ⬚ | Swagger/OpenAPI per service, API versioning |
+| 52-54 | `feat: add cross-cutting concerns with correlation IDs, Polly resilience, and API versioning.` | ✅ | StayHub.Shared.Web library: CorrelationIdMiddleware (Serilog LogContext enrichment, X-Correlation-Id propagation), Polly resilience (3 retries + exponential backoff + circuit breaker on Booking→Hotel HTTP client + CorrelationIdDelegatingHandler), Asp.Versioning (URL segment + query string + header, configured across all 7 services) |
 
 ## Phase 11: Testing
 

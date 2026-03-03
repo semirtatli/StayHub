@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Identity.UnitTests</RootNamespace>
+    <AssemblyName>StayHub.Services.Identity.UnitTests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Services\Identity\StayHub.Services.Identity.Application\StayHub.Services.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Services\Identity\StayHub.Services.Identity.Domain\StayHub.Services.Identity.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+</Project>

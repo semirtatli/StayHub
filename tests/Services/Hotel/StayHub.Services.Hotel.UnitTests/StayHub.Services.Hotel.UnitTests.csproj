@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Hotel.UnitTests</RootNamespace>
+    <AssemblyName>StayHub.Services.Hotel.UnitTests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Services\Hotel\StayHub.Services.Hotel.Application\StayHub.Services.Hotel.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Services\Hotel\StayHub.Services.Hotel.Domain\StayHub.Services.Hotel.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+</Project>

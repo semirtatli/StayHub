@@ -38,4 +38,10 @@
     <Project Path="src/Services/Review/StayHub.Services.Review.Infrastructure/StayHub.Services.Review.Infrastructure.csproj" />
     <Project Path="src/Services/Review/StayHub.Services.Review.Api/StayHub.Services.Review.Api.csproj" />
   </Folder>
+  <Folder Name="/src/Services/Notification/">
+    <Project Path="src/Services/Notification/StayHub.Services.Notification.Domain/StayHub.Services.Notification.Domain.csproj" />
+    <Project Path="src/Services/Notification/StayHub.Services.Notification.Application/StayHub.Services.Notification.Application.csproj" />
+    <Project Path="src/Services/Notification/StayHub.Services.Notification.Infrastructure/StayHub.Services.Notification.Infrastructure.csproj" />
+    <Project Path="src/Services/Notification/StayHub.Services.Notification.Api/StayHub.Services.Notification.Api.csproj" />
+  </Folder>
 </Solution>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Notification.Domain</RootNamespace>
+    <AssemblyName>StayHub.Services.Notification.Domain</AssemblyName>
+    <Description>Notification Service domain layer — entities, enums, value objects, and repository contracts.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared\StayHub.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

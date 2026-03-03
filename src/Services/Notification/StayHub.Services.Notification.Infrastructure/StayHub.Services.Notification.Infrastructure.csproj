@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Notification.Infrastructure</RootNamespace>
+    <AssemblyName>StayHub.Services.Notification.Infrastructure</AssemblyName>
+    <Description>Notification Service infrastructure layer — EF Core, email sending, template rendering, and MassTransit consumers.</Description>
+    <!-- CA1716: "Shared" in transitive namespace; CA1848/CA1873: Logger delegates; CA1305: culture-specific formatting -->
+    <NoWarn>CA1716;CA1848;CA1873;CA1305</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Notification.Application\StayHub.Services.Notification.Application.csproj" />
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared.Infrastructure\StayHub.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MediatR" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\**\*.html" />
+  </ItemGroup>
+
+</Project>

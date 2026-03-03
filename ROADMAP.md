@@ -85,9 +85,9 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 36 | Notification Service scaffold | ⬚ | Worker service, MassTransit consumers |
-| 37 | Email templates | ⬚ | Razor-based: booking confirmation, cancellation, payment receipt, review reminder |
-| 38 | Event consumers | ⬚ | BookingConfirmed→email, PaymentCompleted→receipt, etc. |
+| 36 | Notification Service scaffold | ✅ | Worker service, MassTransit consumers |
+| 37 | Email templates | ✅ | Razor-based: booking confirmation, cancellation, payment receipt, review reminder |
+| 38 | Event consumers | ✅ | BookingConfirmed→email, PaymentCompleted→receipt, etc. |
 
 ## Phase 8: Analytics Service
 

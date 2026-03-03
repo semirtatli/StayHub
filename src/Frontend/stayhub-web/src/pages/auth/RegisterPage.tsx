@@ -41,9 +41,26 @@ export function RegisterPage() {
         confirmPassword: form.confirmPassword,
         role: 'Guest',
       });
-      navigate('/verify-email', { state: { email: form.email } });
-    } catch {
-      setError('Registration failed. The email may already be in use.');
+      navigate('/');
+    } catch (err: unknown) {
+      // Extract real validation/error messages from the API response
+      interface ErrorItem { field?: string; message: string }
+      const axiosErr = err as { response?: { data?: { message?: string; errors?: ErrorItem[] | Record<string, string[]> } } };
+      const data = axiosErr?.response?.data;
+
+      if (data?.errors && Array.isArray(data.errors)) {
+        // Our custom error format: { errors: [{ field, message }] }
+        const messages = (data.errors as ErrorItem[]).map((e) => e.message);
+        setError(messages.join(' '));
+      } else if (data?.errors && typeof data.errors === 'object') {
+        // ASP.NET validation format: { errors: { Field: ["msg"] } }
+        const messages = Object.values(data.errors as Record<string, string[]>).flat();
+        setError(messages.join(' '));
+      } else if (data?.message) {
+        setError(data.message);
+      } else {
+        setError('Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

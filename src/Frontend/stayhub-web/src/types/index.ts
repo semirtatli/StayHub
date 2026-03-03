@@ -16,11 +16,18 @@ export interface RegisterRequest {
 
 export interface AuthResponse {
   accessToken: string;
-  refreshToken: string;
-  expiresAt: string;
-  userId: string;
-  email: string;
-  roles: string[];
+  accessTokenExpiresAt: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string;
+    avatarUrl?: string;
+    role: string;
+    emailConfirmed: boolean;
+    createdAt: string;
+  };
 }
 
 export interface User {

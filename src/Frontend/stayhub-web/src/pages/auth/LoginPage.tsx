@@ -23,8 +23,9 @@ export function LoginPage() {
     try {
       await login({ email, password });
       navigate(from, { replace: true });
-    } catch {
-      setError('Invalid email or password. Please try again.');
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setError(axiosErr?.response?.data?.message || 'Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
     }

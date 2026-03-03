@@ -177,11 +177,12 @@ public sealed class AuthController : ApiController
     /// </summary>
     private void SetRefreshTokenCookie(string token)
     {
+        var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
+            Secure = !isDevelopment,
+            SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.Strict,
             Expires = DateTimeOffset.UtcNow.AddDays(7),
             Path = "/api/auth"
         };

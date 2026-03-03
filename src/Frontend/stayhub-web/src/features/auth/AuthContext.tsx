@@ -34,13 +34,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(data: RegisterRequest) {
-    const { data: auth } = await api.post<AuthResponse>('/auth/register', data);
-    persistAuth(auth);
+    // Register creates the user, then auto-login to get tokens
+    await api.post('/auth/register', data);
+    await login({ email: data.email, password: data.password });
   }
 
   function logout() {
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     setUser(null);
   }
@@ -51,11 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function persistAuth(auth: AuthResponse) {
     localStorage.setItem('accessToken', auth.accessToken);
-    localStorage.setItem('refreshToken', auth.refreshToken);
     const u: User = {
-      userId: auth.userId,
-      email: auth.email,
-      roles: auth.roles,
+      userId: auth.user.id,
+      email: auth.user.email,
+      firstName: auth.user.firstName,
+      lastName: auth.user.lastName,
+      roles: [auth.user.role],
     };
     localStorage.setItem('user', JSON.stringify(u));
     setUser(u);

@@ -10,6 +10,7 @@ import type { ApiError } from '@/types';
 const api = axios.create({
   baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 });
 
 // ── Request interceptor: attach JWT ──
@@ -58,16 +59,11 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          throw new Error('No refresh token');
-        }
-
-        const { data } = await axios.post('/api/auth/refresh', { refreshToken });
-        const { accessToken, refreshToken: newRefreshToken } = data;
+        // Refresh token is sent automatically as httpOnly cookie
+        const { data } = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        const { accessToken } = data;
 
         localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
 
         processQueue(null, accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -75,7 +71,6 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
         window.location.href = '/login';
         return Promise.reject(refreshError);

@@ -77,9 +77,9 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 33 | Review Service scaffold | ⬚ | Domain model (Review aggregate, Rating VO with categories) |
-| 34 | Review CRUD | ⬚ | Create (only after completed stay), update, soft-delete |
-| 35 | Rating aggregation | ⬚ | Recalculate hotel average on review events, cache in read model |
+| 33 | Review Service scaffold | ✅ | Domain model (Review aggregate, Rating VO with categories) |
+| 34 | Review CRUD | ✅ | Create (only after completed stay), update, soft-delete |
+| 35 | Rating aggregation | ✅ | Recalculate hotel average on review events, cache in read model |
 
 ## Phase 7: Notification Service
 

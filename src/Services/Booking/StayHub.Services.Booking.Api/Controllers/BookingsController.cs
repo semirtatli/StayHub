@@ -2,18 +2,28 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StayHub.Services.Booking.Application.DTOs;
+using StayHub.Services.Booking.Application.Features.CancelBooking;
+using StayHub.Services.Booking.Application.Features.CheckInBooking;
+using StayHub.Services.Booking.Application.Features.CompleteBooking;
+using StayHub.Services.Booking.Application.Features.ConfirmBooking;
 using StayHub.Services.Booking.Application.Features.CreateBooking;
+using StayHub.Services.Booking.Application.Features.MarkNoShow;
 
 namespace StayHub.Services.Booking.Api.Controllers;
 
 /// <summary>
-/// Booking management controller — reservation CRUD operations.
+/// Booking management controller — reservation CRUD and lifecycle operations.
 ///
 /// Authorization:
 /// - POST /api/bookings → Authenticated (any logged-in user can create a booking)
+/// - POST /api/bookings/{id}/confirm → HotelOwnerOrAdmin (confirm after payment)
+/// - POST /api/bookings/{id}/check-in → HotelOwnerOrAdmin (hotel staff action)
+/// - POST /api/bookings/{id}/complete → HotelOwnerOrAdmin (guest checkout)
+/// - POST /api/bookings/{id}/cancel → Authenticated (guest cancels own booking)
+/// - POST /api/bookings/{id}/no-show → HotelOwnerOrAdmin (guest did not arrive)
 /// - GET /api/bookings/{id} → Authenticated (guest or hotel owner — added in commit 28)
 ///
-/// GuestUserId is always extracted from JWT claims, never from request body.
+/// UserId is always extracted from JWT claims, never from request body.
 /// </summary>
 [Route("api/bookings")]
 public sealed class BookingsController : ApiController
@@ -59,6 +69,104 @@ public sealed class BookingsController : ApiController
     }
 
     /// <summary>
+    /// Confirm a booking after payment verification.
+    /// Transition: Pending → Confirmed.
+    /// </summary>
+    [HttpPost("{id:guid}/confirm")]
+    [Authorize(Policy = "HotelOwnerOrAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Confirm(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var command = new ConfirmBookingCommand(id);
+        var result = await Mediator.Send(command, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Check in a guest.
+    /// Transition: Confirmed → CheckedIn.
+    /// </summary>
+    [HttpPost("{id:guid}/check-in")]
+    [Authorize(Policy = "HotelOwnerOrAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CheckIn(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var command = new CheckInBookingCommand(id, userId);
+        var result = await Mediator.Send(command, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Complete a booking (guest checks out).
+    /// Transition: CheckedIn → Completed.
+    /// </summary>
+    [HttpPost("{id:guid}/complete")]
+    [Authorize(Policy = "HotelOwnerOrAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Complete(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var command = new CompleteBookingCommand(id, userId);
+        var result = await Mediator.Send(command, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Cancel a booking.
+    /// Transition: Pending → Cancelled, Confirmed → Cancelled (requires reason).
+    /// Only the guest who made the booking can cancel it.
+    /// </summary>
+    [HttpPost("{id:guid}/cancel")]
+    [Authorize(Policy = "Authenticated")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Cancel(
+        Guid id,
+        [FromBody] CancelBookingRequest? request,
+        CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var command = new CancelBookingCommand(id, request?.CancellationReason, userId);
+        var result = await Mediator.Send(command, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Mark a booking as no-show.
+    /// Transition: Confirmed → NoShow.
+    /// Hotel staff action when the guest does not arrive.
+    /// </summary>
+    [HttpPost("{id:guid}/no-show")]
+    [Authorize(Policy = "HotelOwnerOrAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> MarkNoShow(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var command = new MarkNoShowCommand(id, userId);
+        var result = await Mediator.Send(command, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
     /// Get a booking by ID — placeholder for commit 28.
     /// </summary>
     [HttpGet("{id:guid}")]
@@ -98,3 +206,10 @@ public sealed record CreateBookingRequest(
     string Email,
     string? Phone,
     string? SpecialRequests);
+
+/// <summary>
+/// Request body for POST /api/bookings/{id}/cancel.
+/// Cancellation reason is optional for Pending, required for Confirmed bookings.
+/// </summary>
+public sealed record CancelBookingRequest(
+    string? CancellationReason);

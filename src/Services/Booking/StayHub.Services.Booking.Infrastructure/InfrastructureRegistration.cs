@@ -8,6 +8,7 @@ using StayHub.Services.Booking.Infrastructure.Persistence;
 using StayHub.Services.Booking.Infrastructure.Persistence.Repositories;
 using StayHub.Shared.Infrastructure;
 using StayHub.Shared.Infrastructure.Interceptors;
+using StayHub.Shared.Infrastructure.Outbox;
 using StayHub.Shared.Interfaces;
 
 namespace StayHub.Services.Booking.Infrastructure;
@@ -49,6 +50,9 @@ public static class InfrastructureRegistration
 
         // ── Repositories ──
         services.AddScoped<IBookingRepository, BookingRepository>();
+
+        // ── Outbox processor (polls OutboxMessages table, publishes to broker) ──
+        services.AddOutboxProcessor<BookingDbContext>();
 
         // ── External service clients ──
         services.AddHttpClient<IHotelServiceClient, HotelServiceHttpClient>(client =>

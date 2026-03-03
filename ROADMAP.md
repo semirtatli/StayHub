@@ -60,7 +60,7 @@
 | 23 | Booking Service scaffold | ✅ | 4-layer Clean Architecture, BookingEntity aggregate with full state machine, 4 value objects, 6 domain events, repository, EF Core config, API host (port 5104) |
 | 24 | Reservation creation | ✅ | IHotelServiceClient anti-corruption layer, CreateBooking command/validator/handler with HTTP availability validation, HotelServiceHttpClient infrastructure, BookingsController POST endpoint |
 | 25 | Booking state machine | ✅ | 5 status transition commands (Confirm, CheckIn, Complete, Cancel, MarkNoShow) with domain event dispatch, CancelBooking validator, BookingsController endpoints |
-| 26 | Cancellation policies | ⬚ | Configurable per hotel, refund calculation based on timing |
+| 26 | Cancellation policies | ✅ | Configurable per hotel, refund calculation based on timing |
 | 27 | Outbox pattern implementation | ⬚ | Store integration events in same transaction, background publisher |
 | 28 | Guest booking queries | ⬚ | My bookings, booking details, PDF confirmation generation |
 

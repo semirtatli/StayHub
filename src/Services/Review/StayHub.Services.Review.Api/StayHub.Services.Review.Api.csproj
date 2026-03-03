@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Review.Api</RootNamespace>
+    <AssemblyName>StayHub.Services.Review.Api</AssemblyName>
+    <Description>Review Service API layer — controllers, middleware, and host configuration.</Description>
+    <!-- CA1848/CA1873: Logger message delegates in middleware — acceptable overhead -->
+    <NoWarn>CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Review.Application\StayHub.Services.Review.Application.csproj" />
+    <ProjectReference Include="..\StayHub.Services.Review.Infrastructure\StayHub.Services.Review.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+</Project>

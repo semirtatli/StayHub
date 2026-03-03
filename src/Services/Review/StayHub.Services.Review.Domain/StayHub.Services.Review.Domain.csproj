@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Review.Domain</RootNamespace>
+    <AssemblyName>StayHub.Services.Review.Domain</AssemblyName>
+    <Description>Review Service domain layer — aggregates, value objects, domain events, and repository interfaces.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared\StayHub.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

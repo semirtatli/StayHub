@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Review.Application</RootNamespace>
+    <AssemblyName>StayHub.Services.Review.Application</AssemblyName>
+    <Description>Review Service application layer — commands, queries, handlers, DTOs, and validators.</Description>
+    <!-- CA1848/CA1873: LoggerMessage delegates — acceptable in command handlers -->
+    <NoWarn>CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Review.Domain\StayHub.Services.Review.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

@@ -93,9 +93,9 @@
 
 | # | Commit | Status | Description |
 |---|--------|--------|-------------|
-| 39 | Analytics Service scaffold | ⬚ | Read-optimized, event-sourced projections |
-| 40 | Data projections | ⬚ | Revenue, occupancy rates, booking trends, top hotels |
-| 41 | Admin query endpoints | ⬚ | Time-series APIs, KPI summaries, CSV/Excel export |
+| 39 | Analytics Service scaffold | ✅ | Read-optimized, event-sourced projections |
+| 40 | Data projections | ✅ | Revenue, occupancy rates, booking trends, top hotels |
+| 41 | Admin query endpoints | ✅ | Time-series APIs, KPI summaries, CSV/Excel export |
 
 ## Phase 9: React Frontend
 

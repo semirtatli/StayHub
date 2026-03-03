@@ -4,6 +4,8 @@ using StayHub.Services.Review.Api.Middleware;
 using StayHub.Services.Review.Application;
 using StayHub.Services.Review.Infrastructure;
 using StayHub.Services.Review.Infrastructure.Persistence;
+using StayHub.Shared.Web.Versioning;
+using StayHub.Shared.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +88,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// ── API Versioning ──────────────────────────────────────────────────────
+builder.Services.AddStayHubApiVersioning();
+
 // ── Health checks ────────────────────────────────────────────────────────
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ReviewDbContext>("review-db");
@@ -120,6 +125,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
 

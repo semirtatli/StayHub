@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\StayHub.Services.Identity.Application\StayHub.Services.Identity.Application.csproj" />
     <ProjectReference Include="..\StayHub.Services.Identity.Infrastructure\StayHub.Services.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared.Web\StayHub.Shared.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

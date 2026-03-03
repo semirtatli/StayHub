@@ -4,6 +4,8 @@ using StayHub.Services.Booking.Api.Middleware;
 using StayHub.Services.Booking.Application;
 using StayHub.Services.Booking.Infrastructure;
 using StayHub.Services.Booking.Infrastructure.Persistence;
+using StayHub.Shared.Web.Versioning;
+using StayHub.Shared.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,6 +91,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// ── API Versioning ──────────────────────────────────────────────────────
+builder.Services.AddStayHubApiVersioning();
+
 // ── Health checks ────────────────────────────────────────────────────────
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<BookingDbContext>("booking-db");
@@ -123,6 +128,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
 

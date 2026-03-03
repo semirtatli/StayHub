@@ -5,6 +5,8 @@ using StayHub.Services.Identity.Application;
 using StayHub.Services.Identity.Infrastructure;
 using StayHub.Services.Identity.Infrastructure.Identity;
 using StayHub.Services.Identity.Infrastructure.Persistence;
+using StayHub.Shared.Web.Versioning;
+using StayHub.Shared.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +95,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// ── API Versioning ──────────────────────────────────────────────────────
+builder.Services.AddStayHubApiVersioning();
+
 // ── Health checks ────────────────────────────────────────────────────────
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<StayHub.Services.Identity.Infrastructure.Persistence.IdentityDbContext>("identity-db");
@@ -129,6 +134,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
 

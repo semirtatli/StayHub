@@ -8,6 +8,7 @@ using StayHub.Services.Booking.Infrastructure.ExternalServices;
 using StayHub.Services.Booking.Infrastructure.Persistence;
 using StayHub.Services.Booking.Infrastructure.Persistence.Repositories;
 using StayHub.Shared.Infrastructure;
+using StayHub.Shared.Web.Resilience;
 using StayHub.Shared.Infrastructure.Interceptors;
 using StayHub.Shared.Infrastructure.Outbox;
 using StayHub.Shared.Interfaces;
@@ -59,6 +60,9 @@ public static class InfrastructureRegistration
         services.AddOutboxProcessor<BookingDbContext>();
 
         // ── External service clients ──
+        services.AddHttpContextAccessor();
+        services.AddTransient<CorrelationIdDelegatingHandler>();
+
         services.AddHttpClient<IHotelServiceClient, HotelServiceHttpClient>(client =>
         {
             var baseUrl = configuration["ExternalServices:HotelService:BaseUrl"]
@@ -66,7 +70,9 @@ public static class InfrastructureRegistration
 
             client.BaseAddress = new Uri(baseUrl);
             client.Timeout = TimeSpan.FromSeconds(30);
-        });
+        })
+        .AddHttpMessageHandler<CorrelationIdDelegatingHandler>()
+        .AddStandardResilience();
 
         return services;
     }

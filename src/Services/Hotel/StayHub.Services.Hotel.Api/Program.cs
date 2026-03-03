@@ -4,6 +4,8 @@ using StayHub.Services.Hotel.Api.Middleware;
 using StayHub.Services.Hotel.Application;
 using StayHub.Services.Hotel.Infrastructure;
 using StayHub.Services.Hotel.Infrastructure.Persistence;
+using StayHub.Shared.Web.Versioning;
+using StayHub.Shared.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,6 +91,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// ── API Versioning ──────────────────────────────────────────────────────
+builder.Services.AddStayHubApiVersioning();
+
 // ── Health checks ────────────────────────────────────────────────────────
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<HotelDbContext>("hotel-db");
@@ -124,6 +129,7 @@ if (app.Environment.IsDevelopment())
 }
 // Serve uploaded photos from wwwroot/uploads/
 app.UseStaticFiles();
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
 

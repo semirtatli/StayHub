@@ -3,6 +3,7 @@
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/StayHub.Shared/StayHub.Shared.csproj" />
     <Project Path="src/Shared/StayHub.Shared.Infrastructure/StayHub.Shared.Infrastructure.csproj" />
+    <Project Path="src/Shared/StayHub.Shared.Web/StayHub.Shared.Web.csproj" />
   </Folder>
   <Folder Name="/src/ApiGateway/">
     <Project Path="src/ApiGateway/StayHub.ApiGateway/StayHub.ApiGateway.csproj" />

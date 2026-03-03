@@ -4,6 +4,7 @@ using StayHub.Services.Analytics.Api.Middleware;
 using StayHub.Services.Analytics.Application;
 using StayHub.Services.Analytics.Infrastructure;
 using StayHub.Services.Analytics.Infrastructure.Persistence;
+using StayHub.Shared.Web;
 using StayHub.Shared.Web.Versioning;
 using StayHub.Shared.Web.Middleware;
 
@@ -15,6 +16,7 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 // ── Application & Infrastructure layers ──────────────────────────────────
 builder.Services.AddAnalyticsApplication();
 builder.Services.AddAnalyticsInfrastructure(builder.Configuration);
+builder.Services.AddSharedWebServices();
 
 // ── Authentication (JWT Bearer — validates tokens issued by Identity Service) ──
 builder.Services
@@ -113,7 +115,7 @@ if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AnalyticsDbContext>();
-    await dbContext.Database.MigrateAsync();
+    await dbContext.Database.EnsureCreatedAsync();
 }
 
 // ── Middleware pipeline ──────────────────────────────────────────────────

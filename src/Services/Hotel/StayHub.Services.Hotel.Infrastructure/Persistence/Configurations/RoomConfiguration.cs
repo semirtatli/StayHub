@@ -71,10 +71,7 @@ public sealed class RoomConfiguration : BaseEntityConfiguration<Room>
                 v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
                 v => System.Text.Json.JsonSerializer.Deserialize<List<string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<string>())
             .HasColumnType("nvarchar(max)")
-            .HasColumnName("Amenities");
-
-        // Backing field for private collection
-        builder.Navigation(r => r.Amenities)
+            .HasColumnName("Amenities")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(r => r.PhotoUrls)
@@ -82,9 +79,7 @@ public sealed class RoomConfiguration : BaseEntityConfiguration<Room>
                 v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
                 v => System.Text.Json.JsonSerializer.Deserialize<List<string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<string>())
             .HasColumnType("nvarchar(max)")
-            .HasColumnName("PhotoUrls");
-
-        builder.Navigation(r => r.PhotoUrls)
+            .HasColumnName("PhotoUrls")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         // ── Indexes ─────────────────────────────────────────────────────

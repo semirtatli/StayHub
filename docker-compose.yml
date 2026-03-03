@@ -8,7 +8,7 @@ services:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=StayHub@Dev2026!
     ports:
-      - "1433:1433"
+      - "14330:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
     healthcheck:
@@ -41,7 +41,7 @@ services:
     ports:
       - "5000:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       identity-api:
         condition: service_started
@@ -58,8 +58,8 @@ services:
     ports:
       - "5100:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=StayHub_Identity;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__IdentityDb=Server=sqlserver;Database=StayHub_Identity;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -71,8 +71,8 @@ services:
     ports:
       - "5102:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=StayHub_Hotel;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__HotelDb=Server=sqlserver;Database=StayHub_Hotel;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -84,8 +84,8 @@ services:
     ports:
       - "5104:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=StayHub_Booking;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__BookingDb=Server=sqlserver;Database=StayHub_Booking;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -97,8 +97,8 @@ services:
     ports:
       - "5106:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=StayHub_Payment;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PaymentDb=Server=sqlserver;Database=StayHub_Payment;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -110,8 +110,8 @@ services:
     ports:
       - "5108:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=StayHub_Review;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ReviewDb=Server=sqlserver;Database=StayHub_Review;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -123,8 +123,8 @@ services:
     ports:
       - "5110:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=StayHub_Notification;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__NotificationDb=Server=sqlserver;Database=StayHub_Notification;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -138,8 +138,8 @@ services:
     ports:
       - "5112:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=StayHub_Analytics;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__AnalyticsDb=Server=sqlserver;Database=StayHub_Analytics;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -150,7 +150,7 @@ services:
       context: .
       dockerfile: src/Frontend/Dockerfile
     ports:
-      - "3000:80"
+      - "3001:80"
     depends_on:
       - api-gateway
 

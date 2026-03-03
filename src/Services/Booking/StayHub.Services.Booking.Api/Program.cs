@@ -4,6 +4,7 @@ using StayHub.Services.Booking.Api.Middleware;
 using StayHub.Services.Booking.Application;
 using StayHub.Services.Booking.Infrastructure;
 using StayHub.Services.Booking.Infrastructure.Persistence;
+using StayHub.Shared.Web;
 using StayHub.Shared.Web.Versioning;
 using StayHub.Shared.Web.Middleware;
 
@@ -15,6 +16,7 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 // ── Application & Infrastructure layers ──────────────────────────────────
 builder.Services.AddBookingApplication();
 builder.Services.AddBookingInfrastructure(builder.Configuration);
+builder.Services.AddSharedWebServices();
 
 // ── Authentication (JWT Bearer — validates tokens issued by Identity Service) ──
 builder.Services
@@ -116,7 +118,7 @@ if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<BookingDbContext>();
-    await dbContext.Database.MigrateAsync();
+    await dbContext.Database.EnsureCreatedAsync();
 }
 
 // ── Middleware pipeline ──────────────────────────────────────────────────

@@ -4,6 +4,7 @@ using StayHub.Services.Payment.Api.Middleware;
 using StayHub.Services.Payment.Application;
 using StayHub.Services.Payment.Infrastructure;
 using StayHub.Services.Payment.Infrastructure.Persistence;
+using StayHub.Shared.Web;
 using StayHub.Shared.Web.Versioning;
 using StayHub.Shared.Web.Middleware;
 
@@ -15,6 +16,7 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 // ── Application & Infrastructure layers ──────────────────────────────────
 builder.Services.AddPaymentApplication();
 builder.Services.AddPaymentInfrastructure(builder.Configuration);
+builder.Services.AddSharedWebServices();
 
 // ── Authentication (JWT Bearer — validates tokens issued by Identity Service) ──
 builder.Services
@@ -113,7 +115,7 @@ if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
-    await dbContext.Database.MigrateAsync();
+    await dbContext.Database.EnsureCreatedAsync();
 }
 
 // ── Middleware pipeline ──────────────────────────────────────────────────

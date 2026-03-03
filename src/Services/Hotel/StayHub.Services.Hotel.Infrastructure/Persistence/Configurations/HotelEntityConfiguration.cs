@@ -60,9 +60,7 @@ public sealed class HotelEntityConfiguration : BaseEntityConfiguration<HotelEnti
                 v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
                 v => System.Text.Json.JsonSerializer.Deserialize<List<string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<string>())
             .HasColumnType("nvarchar(max)")
-            .HasColumnName("PhotoUrls");
-
-        builder.Navigation(h => h.PhotoUrls)
+            .HasColumnName("PhotoUrls")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         // ── Owned value object: Address ─────────────────────────────────

@@ -5,6 +5,7 @@ using StayHub.Services.Identity.Application;
 using StayHub.Services.Identity.Infrastructure;
 using StayHub.Services.Identity.Infrastructure.Identity;
 using StayHub.Services.Identity.Infrastructure.Persistence;
+using StayHub.Shared.Web;
 using StayHub.Shared.Web.Versioning;
 using StayHub.Shared.Web.Middleware;
 
@@ -16,6 +17,7 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 // ── Application & Infrastructure layers ──────────────────────────────────
 builder.Services.AddIdentityApplication();
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.AddSharedWebServices();
 
 // ── Authentication (JWT Bearer) ──────────────────────────────────────────
 builder.Services
@@ -120,7 +122,7 @@ if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
-    await dbContext.Database.MigrateAsync();
+    await dbContext.Database.EnsureCreatedAsync();
 }
 
 await IdentitySeeder.SeedRolesAsync(app.Services);

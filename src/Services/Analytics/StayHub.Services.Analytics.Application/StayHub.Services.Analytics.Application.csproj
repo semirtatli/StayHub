@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Analytics.Application</RootNamespace>
+    <AssemblyName>StayHub.Services.Analytics.Application</AssemblyName>
+    <Description>Analytics Service application layer — commands, queries, handlers, DTOs, and event projectors.</Description>
+    <!-- CA1848/CA1873: LoggerMessage delegates — acceptable in handlers -->
+    <!-- CA1305: CultureInfo for ToString — template data is display-only -->
+    <NoWarn>CA1848;CA1873;CA1305</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Analytics.Domain\StayHub.Services.Analytics.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

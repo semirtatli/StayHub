@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Analytics.Domain</RootNamespace>
+    <AssemblyName>StayHub.Services.Analytics.Domain</AssemblyName>
+    <Description>Analytics Service domain layer — read-model entities, enums, and repository interfaces for event-sourced projections.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared\StayHub.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

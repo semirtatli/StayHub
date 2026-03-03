@@ -44,4 +44,10 @@
     <Project Path="src/Services/Notification/StayHub.Services.Notification.Infrastructure/StayHub.Services.Notification.Infrastructure.csproj" />
     <Project Path="src/Services/Notification/StayHub.Services.Notification.Api/StayHub.Services.Notification.Api.csproj" />
   </Folder>
+  <Folder Name="/src/Services/Analytics/">
+    <Project Path="src/Services/Analytics/StayHub.Services.Analytics.Domain/StayHub.Services.Analytics.Domain.csproj" />
+    <Project Path="src/Services/Analytics/StayHub.Services.Analytics.Application/StayHub.Services.Analytics.Application.csproj" />
+    <Project Path="src/Services/Analytics/StayHub.Services.Analytics.Infrastructure/StayHub.Services.Analytics.Infrastructure.csproj" />
+    <Project Path="src/Services/Analytics/StayHub.Services.Analytics.Api/StayHub.Services.Analytics.Api.csproj" />
+  </Folder>
 </Solution>

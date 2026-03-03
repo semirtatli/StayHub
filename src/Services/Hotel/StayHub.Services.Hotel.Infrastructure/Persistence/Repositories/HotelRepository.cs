@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StayHub.Services.Hotel.Domain.Entities;
+using StayHub.Services.Hotel.Domain.Enums;
 using StayHub.Services.Hotel.Domain.Repositories;
 using StayHub.Services.Hotel.Domain.SearchCriteria;
 using StayHub.Services.Hotel.Infrastructure.Persistence.Specifications;
@@ -49,6 +50,17 @@ public sealed class HotelRepository : SpecificationRepository<HotelEntity>, IHot
         return await DbSet.AnyAsync(
             h => h.Name == name && h.OwnerId == ownerId,
             cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<HotelEntity>> GetByStatusAsync(
+        HotelStatus status,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .Where(h => h.Status == status)
+            .OrderByDescending(h => h.CreatedAt)
+            .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc />

@@ -1,4 +1,5 @@
 using StayHub.Services.Hotel.Domain.Entities;
+using StayHub.Services.Hotel.Domain.Enums;
 using StayHub.Services.Hotel.Domain.SearchCriteria;
 using StayHub.Shared.Interfaces;
 using StayHub.Shared.Pagination;
@@ -26,6 +27,14 @@ public interface IHotelRepository : IRepository<HotelEntity>
     /// Prevents duplicate hotel names per owner.
     /// </summary>
     Task<bool> ExistsByNameAndOwnerAsync(string name, string ownerId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get all hotels with a specific status, ordered by creation date descending.
+    /// Used by admin workflows (e.g., listing hotels pending approval).
+    /// </summary>
+    Task<IReadOnlyList<HotelEntity>> GetByStatusAsync(
+        HotelStatus status,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Full-text search with dynamic filtering, geo-distance bounding box,

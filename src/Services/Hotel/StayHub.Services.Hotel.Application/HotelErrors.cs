@@ -29,6 +29,10 @@ public static class HotelErrors
         public static readonly Error UpdateFailed = new(
             "Hotel.UpdateFailed",
             "Failed to update hotel information.");
+
+        public static readonly Error InvalidStatusTransition = new(
+            "Hotel.InvalidStatusTransition",
+            "This status transition is not allowed for the hotel's current status.");
     }
 
     public static class Room

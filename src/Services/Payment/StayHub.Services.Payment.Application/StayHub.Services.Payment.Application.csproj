@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Payment.Application</RootNamespace>
+    <AssemblyName>StayHub.Services.Payment.Application</AssemblyName>
+    <Description>Payment Service application layer — commands, queries, handlers, DTOs, and validators.</Description>
+    <!-- CA1848/CA1873: LoggerMessage delegates — acceptable in command handlers -->
+    <NoWarn>CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Payment.Domain\StayHub.Services.Payment.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

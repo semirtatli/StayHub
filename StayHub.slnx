@@ -26,4 +26,10 @@
     <Project Path="src/Services/Booking/StayHub.Services.Booking.Infrastructure/StayHub.Services.Booking.Infrastructure.csproj" />
     <Project Path="src/Services/Booking/StayHub.Services.Booking.Api/StayHub.Services.Booking.Api.csproj" />
   </Folder>
+  <Folder Name="/src/Services/Payment/">
+    <Project Path="src/Services/Payment/StayHub.Services.Payment.Domain/StayHub.Services.Payment.Domain.csproj" />
+    <Project Path="src/Services/Payment/StayHub.Services.Payment.Application/StayHub.Services.Payment.Application.csproj" />
+    <Project Path="src/Services/Payment/StayHub.Services.Payment.Infrastructure/StayHub.Services.Payment.Infrastructure.csproj" />
+    <Project Path="src/Services/Payment/StayHub.Services.Payment.Api/StayHub.Services.Payment.Api.csproj" />
+  </Folder>
 </Solution>

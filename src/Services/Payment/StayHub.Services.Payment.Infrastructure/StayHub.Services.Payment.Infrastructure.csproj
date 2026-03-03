@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>StayHub.Services.Payment.Infrastructure</RootNamespace>
+    <AssemblyName>StayHub.Services.Payment.Infrastructure</AssemblyName>
+    <Description>Payment Service infrastructure layer — EF Core DbContext, repositories, and Stripe integration.</Description>
+    <!-- CA1716: "Shared" in transitive namespace; CA1848/CA1873: Logger delegates; CA1305: culture-specific formatting -->
+    <NoWarn>CA1716;CA1848;CA1873;CA1305</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StayHub.Services.Payment.Application\StayHub.Services.Payment.Application.csproj" />
+    <ProjectReference Include="..\..\..\Shared\StayHub.Shared.Infrastructure\StayHub.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Stripe.net" />
+  </ItemGroup>
+
+</Project>

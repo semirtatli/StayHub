@@ -62,7 +62,7 @@
 | 25 | Booking state machine | ✅ | 5 status transition commands (Confirm, CheckIn, Complete, Cancel, MarkNoShow) with domain event dispatch, CancelBooking validator, BookingsController endpoints |
 | 26 | Cancellation policies | ✅ | Configurable per hotel, refund calculation based on timing |
 | 27 | Outbox pattern implementation | ✅ | Store integration events in same transaction, background publisher |
-| 28 | Guest booking queries | ⬚ | My bookings, booking details, PDF confirmation generation |
+| 28 | Guest booking queries | ✅ | My bookings, booking details, PDF confirmation generation |
 
 ## Phase 5: Payment Service
 

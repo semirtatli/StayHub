@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StayHub.Services.Booking.Application.Abstractions;
 using StayHub.Services.Booking.Domain.Repositories;
+using StayHub.Services.Booking.Infrastructure.Documents;
 using StayHub.Services.Booking.Infrastructure.ExternalServices;
 using StayHub.Services.Booking.Infrastructure.Persistence;
 using StayHub.Services.Booking.Infrastructure.Persistence.Repositories;
@@ -50,6 +51,9 @@ public static class InfrastructureRegistration
 
         // ── Repositories ──
         services.AddScoped<IBookingRepository, BookingRepository>();
+
+        // ── Document generation ──
+        services.AddScoped<IBookingConfirmationGenerator, PdfBookingConfirmationGenerator>();
 
         // ── Outbox processor (polls OutboxMessages table, publishes to broker) ──
         services.AddOutboxProcessor<BookingDbContext>();

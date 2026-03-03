@@ -1,12 +1,17 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StayHub.Services.Booking.Application.Abstractions;
 using StayHub.Services.Booking.Application.DTOs;
 using StayHub.Services.Booking.Application.Features.CancelBooking;
 using StayHub.Services.Booking.Application.Features.CheckInBooking;
 using StayHub.Services.Booking.Application.Features.CompleteBooking;
 using StayHub.Services.Booking.Application.Features.ConfirmBooking;
 using StayHub.Services.Booking.Application.Features.CreateBooking;
+using StayHub.Services.Booking.Application.Features.GetBookingByConfirmation;
+using StayHub.Services.Booking.Application.Features.GetBookingById;
+using StayHub.Services.Booking.Application.Features.GetHotelBookings;
+using StayHub.Services.Booking.Application.Features.GetMyBookings;
 using StayHub.Services.Booking.Application.Features.MarkNoShow;
 
 namespace StayHub.Services.Booking.Api.Controllers;
@@ -166,17 +171,111 @@ public sealed class BookingsController : ApiController
         return HandleResult(result);
     }
 
+    // ── Queries ──────────────────────────────────────────────────────────
+
     /// <summary>
-    /// Get a booking by ID — placeholder for commit 28.
+    /// Get a single booking by ID with full details.
+    /// Only the guest who made the booking can view it.
     /// </summary>
     [HttpGet("{id:guid}")]
     [Authorize(Policy = "Authenticated")]
     [ProducesResponseType(typeof(BookingDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetById(Guid id)
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetById(
+        Guid id, CancellationToken cancellationToken)
     {
-        // Placeholder — will be implemented in commit 28 (guest booking queries)
-        return NotFound();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var query = new GetBookingByIdQuery(id, userId);
+        var result = await Mediator.Send(query, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Look up a booking by confirmation number (e.g., STH-20260315-A1B2C3D4).
+    /// Useful for guests who have their confirmation email but not the booking ID.
+    /// </summary>
+    [HttpGet("by-confirmation/{confirmationNumber}")]
+    [Authorize(Policy = "Authenticated")]
+    [ProducesResponseType(typeof(BookingDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetByConfirmation(
+        string confirmationNumber, CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var query = new GetBookingByConfirmationQuery(confirmationNumber, userId);
+        var result = await Mediator.Send(query, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Get all bookings for the authenticated guest.
+    /// Optional ?status= filter (Pending, Confirmed, Cancelled, etc.).
+    /// Returns lightweight BookingSummaryDto list.
+    /// </summary>
+    [HttpGet("my")]
+    [Authorize(Policy = "Authenticated")]
+    [ProducesResponseType(typeof(IReadOnlyList<BookingSummaryDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMyBookings(
+        [FromQuery] string? status, CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var query = new GetMyBookingsQuery(userId, status);
+        var result = await Mediator.Send(query, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Get all bookings for a specific hotel. Hotel owner or admin only.
+    /// Optional ?status= filter for the hotel dashboard.
+    /// </summary>
+    [HttpGet("hotel/{hotelId:guid}")]
+    [Authorize(Policy = "HotelOwnerOrAdmin")]
+    [ProducesResponseType(typeof(IReadOnlyList<BookingSummaryDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetHotelBookings(
+        Guid hotelId, [FromQuery] string? status, CancellationToken cancellationToken)
+    {
+        var query = new GetHotelBookingsQuery(hotelId, status);
+        var result = await Mediator.Send(query, cancellationToken);
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Download a PDF booking confirmation document.
+    /// Only the guest who made the booking can download it.
+    /// </summary>
+    [HttpGet("{id:guid}/confirmation.pdf")]
+    [Authorize(Policy = "Authenticated")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> DownloadConfirmationPdf(
+        Guid id, CancellationToken cancellationToken)
+    {
+        // Validate ownership via the GetBookingById query
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var query = new GetBookingByIdQuery(id, userId);
+        var bookingResult = await Mediator.Send(query, cancellationToken);
+
+        if (bookingResult.IsFailure)
+            return HandleResult(bookingResult);
+
+        // Fetch entity for PDF generation (need value objects)
+        var repository = HttpContext.RequestServices
+            .GetRequiredService<Domain.Repositories.IBookingRepository>();
+        var booking = await repository.GetByIdAsync(id, cancellationToken);
+
+        if (booking is null)
+            return NotFound();
+
+        var generator = HttpContext.RequestServices
+            .GetRequiredService<IBookingConfirmationGenerator>();
+        var pdfBytes = await generator.GenerateConfirmationPdfAsync(
+            booking, cancellationToken);
+
+        return File(pdfBytes, "application/pdf",
+            $"StayHub-Confirmation-{booking.ConfirmationNumber}.pdf");
     }
 
     /// <summary>

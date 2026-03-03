@@ -16,6 +16,7 @@ public sealed class HotelDbContext : BaseDbContext
 {
     public DbSet<HotelEntity> Hotels => Set<HotelEntity>();
     public DbSet<Room> Rooms => Set<Room>();
+    public DbSet<RoomAvailability> RoomAvailability => Set<RoomAvailability>();
 
     public HotelDbContext(DbContextOptions<HotelDbContext> options, IMediator mediator)
         : base(options, mediator)

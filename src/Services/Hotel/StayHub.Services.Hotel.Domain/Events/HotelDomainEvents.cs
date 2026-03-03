@@ -57,3 +57,13 @@ public sealed record RoomUpdatedEvent(
 public sealed record RoomRemovedEvent(
     Guid HotelId,
     Guid RoomId) : DomainEvent;
+
+/// <summary>
+/// Raised when room availability is initialized/updated for a date range.
+/// Handlers: notify booking service, update search availability indicators.
+/// </summary>
+public sealed record RoomAvailabilityUpdatedEvent(
+    Guid HotelId,
+    Guid RoomId,
+    DateOnly FromDate,
+    DateOnly ToDate) : DomainEvent;

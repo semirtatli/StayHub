@@ -49,4 +49,35 @@ public static class HotelErrors
             "Room.InvalidOccupancy",
             "Room occupancy must be at least 1.");
     }
+
+    public static class Availability
+    {
+        public static readonly Error RoomNotFound = new(
+            "Availability.RoomNotFound",
+            "Room was not found.");
+
+        public static readonly Error HotelNotFound = new(
+            "Availability.HotelNotFound",
+            "Hotel was not found.");
+
+        public static readonly Error InvalidDateRange = new(
+            "Availability.InvalidDateRange",
+            "Check-in date must be before check-out date.");
+
+        public static readonly Error DateInPast = new(
+            "Availability.DateInPast",
+            "Cannot set availability for dates in the past.");
+
+        public static readonly Error NoAvailability = new(
+            "Availability.NoAvailability",
+            "No rooms available for the requested date range.");
+
+        public static readonly Error DateBlocked = new(
+            "Availability.DateBlocked",
+            "One or more dates in the range are blocked.");
+
+        public static readonly Error NotOwner = new(
+            "Availability.NotOwner",
+            "You are not the owner of this hotel.");
+    }
 }

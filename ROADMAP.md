@@ -49,7 +49,7 @@
 | 17 | Hotel CRUD commands | ✅ | Create/Update hotel with DDD validation, GetById/GetByOwner queries, HotelsController |
 | 18 | Room management | ✅ | AddRoom, UpdateRoom, RemoveRoom commands, GetRoomsByHotel query, RoomsController |
 | 19 | Photo management | ✅ | IFileStorageService abstraction, LocalFileStorageService, hotel photo gallery, upload/delete/reorder |
-| 20 | Search engine | ⬚ | Full-text search, dynamic filtering (Specification pattern), geo-distance, pagination |
+| 20 | Search engine | ✅ | Full-text search, dynamic filtering (Specification pattern), geo-distance, pagination |
 | 21 | Availability engine | ⬚ | Date-range availability checks, room inventory management |
 | 22 | Hotel approval workflow | ⬚ | Admin approval state machine, domain events on status change |
 

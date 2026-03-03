@@ -69,6 +69,12 @@ public sealed class HotelEntity : AggregateRoot
     public TimeOnly CheckOutTime { get; private set; }
 
     /// <summary>
+    /// Cancellation policy for this hotel. Defaults to Flexible.
+    /// Determines refund rules when guests cancel bookings.
+    /// </summary>
+    public CancellationPolicy CancellationPolicy { get; private set; }
+
+    /// <summary>
     /// Primary photo URL for search results / hotel card.
     /// </summary>
     public string? CoverImageUrl { get; private set; }
@@ -105,6 +111,7 @@ public sealed class HotelEntity : AggregateRoot
         Status = HotelStatus.Draft;
         CheckInTime = checkInTime;
         CheckOutTime = checkOutTime;
+        CancellationPolicy = CancellationPolicy.FromType(Enums.CancellationPolicyType.Flexible);
     }
 
     public static HotelEntity Create(
@@ -186,6 +193,20 @@ public sealed class HotelEntity : AggregateRoot
     public void SetCoverImage(string? coverImageUrl)
     {
         CoverImageUrl = coverImageUrl;
+    }
+
+    /// <summary>
+    /// Set the cancellation policy for this hotel.
+    /// Only allowed in Draft or Active status.
+    /// </summary>
+    public void SetCancellationPolicy(CancellationPolicy cancellationPolicy)
+    {
+        ArgumentNullException.ThrowIfNull(cancellationPolicy);
+
+        if (Status is not (HotelStatus.Draft or HotelStatus.Active))
+            throw new InvalidOperationException($"Cannot change cancellation policy in {Status} status.");
+
+        CancellationPolicy = cancellationPolicy;
     }
 
     // ── Status workflow ─────────────────────────────────────────────────

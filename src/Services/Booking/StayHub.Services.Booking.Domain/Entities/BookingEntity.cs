@@ -88,6 +88,12 @@ public sealed class BookingEntity : AggregateRoot
     /// </summary>
     public string? PaymentIntentId { get; private set; }
 
+    /// <summary>Refund percentage calculated from the hotel's cancellation policy (0-100).</summary>
+    public int? RefundPercentage { get; private set; }
+
+    /// <summary>Refund amount calculated at cancellation time.</summary>
+    public Money? RefundAmount { get; private set; }
+
     // ── Constructors ─────────────────────────────────────────────────────
 
     private BookingEntity()
@@ -247,7 +253,9 @@ public sealed class BookingEntity : AggregateRoot
     /// Cancel the booking.
     /// Transition: Pending → Cancelled, Confirmed → Cancelled (requires reason).
     /// </summary>
-    public void Cancel(string? reason = null)
+    /// <param name="reason">Cancellation reason (required for Confirmed bookings).</param>
+    /// <param name="refundPercentage">Refund percentage from the hotel's cancellation policy (0-100). Null for Pending bookings.</param>
+    public void Cancel(string? reason = null, int? refundPercentage = null)
     {
         if (Status is not (BookingStatus.Pending or BookingStatus.Confirmed))
             throw new InvalidOperationException(
@@ -261,6 +269,16 @@ public sealed class BookingEntity : AggregateRoot
         Status = BookingStatus.Cancelled;
         CancellationReason = reason;
         CancelledAt = DateTime.UtcNow;
+
+        // Calculate refund amount from the percentage
+        if (refundPercentage.HasValue)
+        {
+            RefundPercentage = refundPercentage.Value;
+            var refundDecimal = PriceBreakdown.Total.Amount * refundPercentage.Value / 100m;
+            RefundAmount = Money.Create(
+                Math.Round(refundDecimal, 2),
+                PriceBreakdown.Total.Currency);
+        }
 
         RaiseDomainEvent(new BookingStatusChangedEvent(Id, oldStatus, Status, reason));
         RaiseDomainEvent(new BookingCancelledEvent(

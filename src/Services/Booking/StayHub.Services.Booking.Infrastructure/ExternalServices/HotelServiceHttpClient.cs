@@ -126,6 +126,45 @@ public sealed class HotelServiceHttpClient : IHotelServiceClient
         }
     }
 
+    /// <inheritdoc />
+    public async Task<CancellationPolicyResponse?> GetCancellationPolicyAsync(
+        Guid hotelId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(
+                $"api/hotels/{hotelId}/cancellation-policy", cancellationToken);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogDebug(
+                    "Cancellation policy not found for hotel {HotelId}", hotelId);
+                return null;
+            }
+
+            response.EnsureSuccessStatusCode();
+
+            var dto = await response.Content.ReadFromJsonAsync<HotelServiceCancellationPolicyDto>(
+                JsonOptions, cancellationToken);
+
+            if (dto is null)
+                return null;
+
+            return new CancellationPolicyResponse(
+                dto.PolicyType,
+                dto.FreeCancellationDays,
+                dto.PartialRefundPercentage,
+                dto.PartialRefundDays);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex,
+                "HTTP error fetching cancellation policy for hotel {HotelId}", hotelId);
+            return null;
+        }
+    }
+
     // ── Internal DTOs for JSON deserialization (match Hotel API response shape) ──
 
     private sealed record HotelServiceDetailDto(
@@ -165,4 +204,10 @@ public sealed class HotelServiceHttpClient : IHotelServiceClient
         bool IsAvailable,
         decimal TotalPrice,
         string Currency);
+
+    private sealed record HotelServiceCancellationPolicyDto(
+        string PolicyType,
+        int FreeCancellationDays,
+        int PartialRefundPercentage,
+        int PartialRefundDays);
 }

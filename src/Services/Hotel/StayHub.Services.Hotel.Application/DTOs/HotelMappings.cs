@@ -44,6 +44,11 @@ public static class HotelMappings
         hotel.CoverImageUrl,
         hotel.PhotoUrls.ToList(),
         hotel.Rooms.Select(ToRoomDto).ToList(),
+        new CancellationPolicyDto(
+            hotel.CancellationPolicy.PolicyType.ToString(),
+            hotel.CancellationPolicy.FreeCancellationDays,
+            hotel.CancellationPolicy.PartialRefundPercentage,
+            hotel.CancellationPolicy.PartialRefundDays),
         hotel.CreatedAt,
         hotel.LastModifiedAt);
 

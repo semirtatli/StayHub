@@ -124,6 +124,29 @@ public sealed class HotelEntityConfiguration : BaseEntityConfiguration<HotelEnti
                 .HasColumnName("Contact_Website");
         });
 
+        // ── Owned value object: CancellationPolicy ──────────────────────
+
+        builder.OwnsOne(h => h.CancellationPolicy, policyBuilder =>
+        {
+            policyBuilder.Property(p => p.PolicyType)
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .IsRequired()
+                .HasColumnName("CancellationPolicy_Type");
+
+            policyBuilder.Property(p => p.FreeCancellationDays)
+                .IsRequired()
+                .HasColumnName("CancellationPolicy_FreeDays");
+
+            policyBuilder.Property(p => p.PartialRefundPercentage)
+                .IsRequired()
+                .HasColumnName("CancellationPolicy_PartialPct");
+
+            policyBuilder.Property(p => p.PartialRefundDays)
+                .IsRequired()
+                .HasColumnName("CancellationPolicy_PartialDays");
+        });
+
         // ── Navigation: Rooms ───────────────────────────────────────────
 
         builder.HasMany(h => h.Rooms)

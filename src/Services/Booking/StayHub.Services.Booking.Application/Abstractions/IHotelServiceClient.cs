@@ -29,6 +29,14 @@ public interface IHotelServiceClient
         DateOnly checkIn,
         DateOnly checkOut,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get the cancellation policy for a hotel.
+    /// Returns null when the hotel does not exist.
+    /// </summary>
+    Task<CancellationPolicyResponse?> GetCancellationPolicyAsync(
+        Guid hotelId,
+        CancellationToken cancellationToken = default);
 }
 
 // ── Local response DTOs (anti-corruption layer) ──────────────────────────
@@ -75,3 +83,12 @@ public sealed record RoomAvailabilityResponse(
     bool IsAvailable,
     decimal TotalPrice,
     string Currency);
+
+/// <summary>
+/// Cancellation policy as seen by the Booking bounded context.
+/// </summary>
+public sealed record CancellationPolicyResponse(
+    string PolicyType,
+    int FreeCancellationDays,
+    int PartialRefundPercentage,
+    int PartialRefundDays);

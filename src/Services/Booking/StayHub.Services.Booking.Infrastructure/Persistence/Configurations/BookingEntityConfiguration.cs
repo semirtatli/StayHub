@@ -70,6 +70,21 @@ public sealed class BookingEntityConfiguration : BaseEntityConfiguration<Booking
         builder.Property(b => b.PaymentIntentId)
             .HasMaxLength(256);
 
+        builder.Property(b => b.RefundPercentage);
+
+        // ── Owned value object: RefundAmount (optional) ─────────────────
+
+        builder.OwnsOne(b => b.RefundAmount, moneyBuilder =>
+        {
+            moneyBuilder.Property(m => m.Amount)
+                .HasColumnName("Refund_Amount")
+                .HasPrecision(18, 2);
+
+            moneyBuilder.Property(m => m.Currency)
+                .HasColumnName("Refund_Currency")
+                .HasMaxLength(3);
+        });
+
         // ── Owned value object: StayPeriod ──────────────────────────────
 
         builder.OwnsOne(b => b.StayPeriod, stayBuilder =>

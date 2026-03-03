@@ -21,6 +21,7 @@ public sealed record BookingDto(
     string PaymentStatus,
     string? SpecialRequests,
     string? CancellationReason,
+    RefundInfoDto? RefundInfo,
     DateTime? CancelledAt,
     DateTime? CheckedInAt,
     DateTime? CompletedAt,
@@ -63,4 +64,12 @@ public sealed record PriceBreakdownDto(
     decimal TaxAmount,
     decimal ServiceFee,
     decimal Total,
+    string Currency);
+
+/// <summary>
+/// Refund information DTO — included only when a booking has been cancelled.
+/// </summary>
+public sealed record RefundInfoDto(
+    int RefundPercentage,
+    decimal RefundAmount,
     string Currency);

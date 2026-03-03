@@ -40,6 +40,12 @@ public static class BookingMappings
             booking.PaymentStatus.ToString(),
             booking.SpecialRequests,
             booking.CancellationReason,
+            booking.RefundPercentage.HasValue && booking.RefundAmount is not null
+                ? new RefundInfoDto(
+                    booking.RefundPercentage.Value,
+                    booking.RefundAmount.Amount,
+                    booking.RefundAmount.Currency)
+                : null,
             booking.CancelledAt,
             booking.CheckedInAt,
             booking.CompletedAt,

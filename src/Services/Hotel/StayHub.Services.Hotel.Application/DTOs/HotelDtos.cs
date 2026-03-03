@@ -125,5 +125,15 @@ public sealed record HotelDetailDto(
     string? CoverImageUrl,
     IReadOnlyList<string> PhotoUrls,
     IReadOnlyList<RoomDto> Rooms,
+    CancellationPolicyDto CancellationPolicy,
     DateTime CreatedAt,
     DateTime? LastModifiedAt);
+
+/// <summary>
+/// Cancellation policy DTO — defines refund rules for a hotel.
+/// </summary>
+public sealed record CancellationPolicyDto(
+    string PolicyType,
+    int FreeCancellationDays,
+    int PartialRefundPercentage,
+    int PartialRefundDays);

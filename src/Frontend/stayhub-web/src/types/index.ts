@@ -41,26 +41,86 @@ export interface User {
 
 /* ─────────────────────────── Hotel ─────────────────────────── */
 
+export interface AddressDto {
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;
+}
+
+export interface GeoLocationDto {
+  latitude: number;
+  longitude: number;
+}
+
+export interface ContactInfoDto {
+  phone: string;
+  email: string;
+  website?: string;
+}
+
+export interface CancellationPolicyDto {
+  policyType: string;
+  freeCancellationDays: number;
+  partialRefundPercentage: number;
+  partialRefundDays: number;
+}
+
+/** Full hotel detail (single hotel view) */
 export interface Hotel {
   id: string;
   name: string;
   description: string;
+  starRating: number;
+  address: AddressDto;
+  location?: GeoLocationDto;
+  contactInfo: ContactInfoDto;
+  ownerId: string;
+  status: string;
+  statusReason?: string;
+  checkInTime: string;
+  checkOutTime: string;
+  coverImageUrl?: string;
+  photoUrls: string[];
+  rooms: Room[];
+  cancellationPolicy: CancellationPolicyDto;
+  createdAt: string;
+  lastModifiedAt?: string;
+}
+
+/** Hotel search result */
+export interface HotelSearchResult {
+  id: string;
+  name: string;
+  description: string;
+  starRating: number;
   city: string;
   country: string;
-  address: string;
-  zipCode?: string;
-  contactEmail?: string;
-  contactPhone?: string;
-  latitude: number;
-  longitude: number;
+  status: string;
+  coverImageUrl?: string;
+  roomCount: number;
+  minPrice?: number;
+  currency?: string;
+  photoCount: number;
+  distanceKm?: number;
+  createdAt: string;
+}
+
+/** Hotel summary for owner dashboard */
+export interface HotelSummary {
+  id: string;
+  name: string;
   starRating: number;
-  averageRating: number;
-  totalReviews: number;
-  amenities: string[];
-  photos: HotelPhoto[];
-  rooms: Room[];
-  isApproved: boolean;
-  ownerId: string;
+  city: string;
+  country: string;
+  status: string;
+  coverImageUrl?: string;
+  roomCount: number;
+  minPrice?: number;
+  currency?: string;
+  photoCount: number;
+  createdAt: string;
 }
 
 export interface HotelPhoto {
@@ -71,32 +131,22 @@ export interface HotelPhoto {
   sortOrder: number;
 }
 
-export interface HotelSummary {
-  id: string;
-  name: string;
-  city: string;
-  country: string;
-  starRating: number;
-  averageRating: number;
-  totalReviews: number;
-  priceFrom: number;
-  totalRooms?: number;
-  primaryPhotoUrl?: string;
-}
-
 export interface HotelSearchParams {
+  q?: string;
   city?: string;
   country?: string;
-  checkIn?: string;
-  checkOut?: string;
-  guests?: number;
+  minStarRating?: number;
+  maxStarRating?: number;
   minPrice?: number;
   maxPrice?: number;
-  minRating?: number;
-  amenities?: string[];
+  roomType?: string;
+  latitude?: number;
+  longitude?: number;
+  radiusKm?: number;
+  sortBy?: string;
+  sortDescending?: boolean;
   page?: number;
   pageSize?: number;
-  sortBy?: string;
 }
 
 export interface PaginatedResult<T> {
@@ -105,6 +155,8 @@ export interface PaginatedResult<T> {
   page: number;
   pageSize: number;
   totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 }
 
 /* ─────────────────────────── Room ─────────────────────────── */
@@ -115,27 +167,82 @@ export interface Room {
   name: string;
   description: string;
   roomType: string;
-  pricePerNight: number;
-  capacity: number;
-  totalRooms: number;
-  availableRooms: number;
+  maxOccupancy: number;
+  basePrice: number;
+  currency: string;
+  totalInventory: number;
+  sizeInSquareMeters?: number;
+  bedConfiguration?: string;
+  isActive: boolean;
   amenities: string[];
+  photoUrls: string[];
 }
 
 /* ─────────────────────────── Booking ─────────────────────────── */
 
+export interface GuestInfoDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+}
+
+export interface PriceBreakdownDto {
+  nightlyRate: number;
+  nights: number;
+  subtotal: number;
+  taxAmount: number;
+  serviceFee: number;
+  total: number;
+  currency: string;
+}
+
+export interface RefundInfoDto {
+  refundPercentage: number;
+  refundAmount: number;
+  currency: string;
+}
+
+/** Full booking detail */
 export interface Booking {
   id: string;
   hotelId: string;
-  hotelName: string;
   roomId: string;
+  guestUserId: string;
+  hotelName: string;
   roomName: string;
-  userId: string;
-  checkInDate: string;
-  checkOutDate: string;
-  guests: number;
-  totalAmount: number;
+  confirmationNumber: string;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  numberOfGuests: number;
+  guestInfo: GuestInfoDto;
+  priceBreakdown: PriceBreakdownDto;
   status: BookingStatus;
+  paymentStatus: string;
+  specialRequests?: string;
+  cancellationReason?: string;
+  refundInfo?: RefundInfoDto;
+  cancelledAt?: string;
+  checkedInAt?: string;
+  completedAt?: string;
+  createdAt: string;
+  lastModifiedAt?: string;
+}
+
+/** Booking summary for list views */
+export interface BookingSummary {
+  id: string;
+  confirmationNumber: string;
+  hotelName: string;
+  roomName: string;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  status: BookingStatus;
+  paymentStatus: string;
+  totalAmount: number;
+  currency: string;
   createdAt: string;
 }
 
@@ -144,14 +251,19 @@ export type BookingStatus =
   | 'Confirmed'
   | 'CheckedIn'
   | 'Completed'
-  | 'Cancelled';
+  | 'Cancelled'
+  | 'NoShow';
 
 export interface CreateBookingRequest {
   hotelId: string;
   roomId: string;
-  checkInDate: string;
-  checkOutDate: string;
-  guests: number;
+  checkIn: string;
+  checkOut: string;
+  numberOfGuests: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
   specialRequests?: string;
 }
 
@@ -171,39 +283,44 @@ export interface Review {
   hotelId: string;
   hotelName?: string;
   userId: string;
-  userDisplayName: string;
-  overallRating: number;
-  cleanliness: number;
-  comfort: number;
-  location: number;
-  facilities: number;
-  staff: number;
+  guestName: string;
   title: string;
-  comment: string;
+  body: string;
+  cleanliness: number;
+  service: number;
+  location: number;
+  comfort: number;
+  valueForMoney: number;
+  overallRating: number;
   managementResponse?: string;
+  stayedFrom: string;
+  stayedTo: string;
   createdAt: string;
 }
 
 export interface SubmitReviewRequest {
   hotelId: string;
   bookingId: string;
-  cleanliness: number;
-  comfort: number;
-  location: number;
-  facilities: number;
-  staff: number;
+  guestName: string;
   title: string;
-  comment: string;
+  body: string;
+  cleanliness: number;
+  service: number;
+  location: number;
+  comfort: number;
+  valueForMoney: number;
+  stayedFrom: string;
+  stayedTo: string;
 }
 
 export interface HotelRatingSummary {
   hotelId: string;
   averageOverall: number;
   averageCleanliness: number;
-  averageComfort: number;
+  averageService: number;
   averageLocation: number;
-  averageFacilities: number;
-  averageStaff: number;
+  averageComfort: number;
+  averageValueForMoney: number;
   totalReviews: number;
 }
 
@@ -249,5 +366,5 @@ export interface ApiError {
   status: number;
   error: string;
   message: string;
-  errors?: { code: string; message: string }[];
+  errors?: { field: string; message: string }[];
 }

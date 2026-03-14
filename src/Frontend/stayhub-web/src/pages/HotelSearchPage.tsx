@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { MapPin, Search, Star } from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
-import type { HotelSummary, PaginatedResult } from '@/types';
+import type { HotelSearchResult, PaginatedResult } from '@/types';
 import { Button, Input, Card, CardContent, HotelCardSkeleton } from '@/components/ui';
 
 export function HotelSearchPage() {
@@ -24,9 +24,9 @@ export function HotelSearchPage() {
   queryString.set('page', String(page));
   queryString.set('pageSize', '12');
 
-  const { data, isLoading } = useQuery<PaginatedResult<HotelSummary>>({
+  const { data, isLoading } = useQuery<PaginatedResult<HotelSearchResult>>({
     queryKey: ['hotels', city, minPrice, maxPrice, minRating, page],
-    queryFn: () => api.get<PaginatedResult<HotelSummary>>(`/hotels/search?${queryString}`).then((r) => r.data),
+    queryFn: () => api.get<PaginatedResult<HotelSearchResult>>(`/hotels/search?${queryString}`).then((r) => r.data),
   });
 
   useEffect(() => {
@@ -84,8 +84,8 @@ export function HotelSearchPage() {
                 <Link key={hotel.id} to={`/hotels/${hotel.id}`}>
                   <Card hoverable>
                     <div className="aspect-video overflow-hidden rounded-t-lg bg-gray-100">
-                      {hotel.primaryPhotoUrl ? (
-                        <img src={hotel.primaryPhotoUrl} alt={hotel.name} className="h-full w-full object-cover" />
+                      {hotel.coverImageUrl ? (
+                        <img src={hotel.coverImageUrl} alt={hotel.name} className="h-full w-full object-cover" />
                       ) : (
                         <div className="flex h-full items-center justify-center text-gray-300">
                           <MapPin size={48} />
@@ -101,10 +101,10 @@ export function HotelSearchPage() {
                       <div className="mt-2 flex items-center justify-between">
                         <span className="flex items-center gap-1 text-sm font-medium text-accent-500">
                           <Star size={14} fill="currentColor" />
-                          {hotel.averageRating?.toFixed(1) ?? 'New'}
+                          {hotel.starRating} stars
                         </span>
                         <span className="text-lg font-bold text-primary-600">
-                          {formatCurrency(hotel.priceFrom ?? 0)}
+                          {formatCurrency(hotel.minPrice ?? 0)}
                           <span className="text-xs font-normal text-gray-400">/night</span>
                         </span>
                       </div>

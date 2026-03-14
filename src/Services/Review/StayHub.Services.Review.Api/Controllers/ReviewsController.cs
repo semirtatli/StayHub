@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using StayHub.Services.Review.Application.Features.DeleteReview;
 using StayHub.Services.Review.Application.Features.GetHotelRatingSummary;
 using StayHub.Services.Review.Application.Features.GetHotelReviews;
+using StayHub.Services.Review.Application.Features.GetMyReviews;
 using StayHub.Services.Review.Application.Features.GetReviewById;
 using StayHub.Services.Review.Application.Features.RespondToReview;
 using StayHub.Services.Review.Application.Features.SubmitReview;
@@ -119,6 +120,20 @@ public sealed class ReviewsController : ApiController
     }
 
     // ── Queries ──────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Gets all reviews written by the authenticated user.
+    /// </summary>
+    [HttpGet("my")]
+    [Authorize(Policy = "Authenticated")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMyReviews()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var query = new GetMyReviewsQuery(userId);
+        var result = await Mediator.Send(query);
+        return HandleResult(result);
+    }
 
     /// <summary>
     /// Gets a review by its ID.

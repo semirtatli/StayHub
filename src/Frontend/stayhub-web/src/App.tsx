@@ -9,6 +9,7 @@ import { HotelSearchPage } from '@/pages/HotelSearchPage';
 import { HotelDetailPage } from '@/pages/HotelDetailPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
+import { VerifyEmailPage } from '@/pages/auth/VerifyEmailPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ForbiddenPage } from '@/pages/ForbiddenPage';
 
@@ -41,6 +42,7 @@ export function App() {
         <Route path="hotels/:id" element={<HotelDetailPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="verify-email" element={<VerifyEmailPage />} />
 
         {/* ── Authenticated guest routes ── */}
         <Route element={<ProtectedRoute />}>
@@ -52,7 +54,7 @@ export function App() {
         </Route>
 
         {/* ── Owner routes ── */}
-        <Route element={<ProtectedRoute requiredRole="Owner" />}>
+        <Route element={<ProtectedRoute requiredRole="HotelOwner" />}>
           <Route path="owner/hotels" element={<OwnerHotelsPage />} />
           <Route path="owner/hotels/new" element={<OwnerHotelFormPage />} />
           <Route path="owner/hotels/:id/edit" element={<OwnerHotelFormPage />} />

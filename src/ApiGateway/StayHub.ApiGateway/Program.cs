@@ -29,7 +29,9 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 
 // ── YARP Reverse Proxy ───────────────────────────────
 // Load route/cluster config from yarp.json (separate from appsettings for clarity)
+// Environment-specific override (yarp.Development.json) uses localhost addresses for local dev.
 builder.Configuration.AddJsonFile("yarp.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"yarp.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 builder.Services
     .AddReverseProxy()

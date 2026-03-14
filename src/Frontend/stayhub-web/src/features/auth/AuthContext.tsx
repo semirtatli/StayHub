@@ -34,9 +34,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(data: RegisterRequest) {
-    // Register creates the user, then auto-login to get tokens
+    // Register creates the user, then auto-login with the same credentials.
     await api.post('/auth/register', data);
-    await login({ email: data.email, password: data.password });
+    const { data: auth } = await api.post<AuthResponse>('/auth/login', {
+      email: data.email,
+      password: data.password,
+    });
+    persistAuth(auth);
   }
 
   function logout() {

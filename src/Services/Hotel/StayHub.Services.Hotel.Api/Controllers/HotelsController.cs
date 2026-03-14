@@ -7,6 +7,7 @@ using StayHub.Services.Hotel.Application.Features.GetHotelById;
 using StayHub.Services.Hotel.Application.Features.GetHotelsByOwner;
 using StayHub.Services.Hotel.Application.Features.SearchHotels;
 using StayHub.Services.Hotel.Application.Features.UpdateHotel;
+using StayHub.Services.Hotel.Domain.Repositories;
 using StayHub.Shared.Pagination;
 
 namespace StayHub.Services.Hotel.Api.Controllers;
@@ -162,6 +163,21 @@ public sealed class HotelsController : ApiController
         var result = await Mediator.Send(query, cancellationToken);
 
         return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Get all hotels (admin). Returns summary DTOs for admin dashboard.
+    /// </summary>
+    [HttpGet("all")]
+    [Authorize(Policy = "AdminOnly")]
+    [ProducesResponseType(typeof(IReadOnlyList<HotelSummaryDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll(
+        [FromServices] IHotelRepository hotelRepository,
+        CancellationToken cancellationToken)
+    {
+        var hotels = await hotelRepository.GetAllAsync(cancellationToken);
+        var summaries = hotels.Select(HotelMappings.ToSummaryDto).ToList();
+        return Ok(summaries);
     }
 
     /// <summary>

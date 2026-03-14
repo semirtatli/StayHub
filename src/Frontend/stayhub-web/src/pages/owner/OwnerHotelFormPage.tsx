@@ -14,13 +14,17 @@ export function OwnerHotelFormPage() {
   const [form, setForm] = useState({
     name: '',
     description: '',
-    address: '',
+    street: '',
     city: '',
+    state: '',
     country: '',
     zipCode: '',
     starRating: 3,
-    contactEmail: '',
-    contactPhone: '',
+    email: '',
+    phone: '',
+    website: '',
+    checkInTime: '15:00',
+    checkOutTime: '11:00',
   });
 
   const { data: hotel } = useQuery<Hotel>({
@@ -34,13 +38,17 @@ export function OwnerHotelFormPage() {
       setForm({
         name: hotel.name,
         description: hotel.description ?? '',
-        address: hotel.address,
-        city: hotel.city,
-        country: hotel.country,
-        zipCode: hotel.zipCode ?? '',
+        street: hotel.address.street,
+        city: hotel.address.city,
+        state: hotel.address.state ?? '',
+        country: hotel.address.country,
+        zipCode: hotel.address.zipCode ?? '',
         starRating: hotel.starRating,
-        contactEmail: hotel.contactEmail ?? '',
-        contactPhone: hotel.contactPhone ?? '',
+        email: hotel.contactInfo.email ?? '',
+        phone: hotel.contactInfo.phone ?? '',
+        website: hotel.contactInfo.website ?? '',
+        checkInTime: hotel.checkInTime ?? '15:00',
+        checkOutTime: hotel.checkOutTime ?? '11:00',
       });
     }
   }, [hotel]);
@@ -105,22 +113,32 @@ export function OwnerHotelFormPage() {
           <CardContent>
             <h2 className="text-lg font-semibold text-gray-900">Location</h2>
             <div className="mt-4 space-y-4">
-              <Input label="Address" required value={form.address} onChange={(e) => update('address', e.target.value)} placeholder="123 Main St" />
+              <Input label="Street" required value={form.street} onChange={(e) => update('street', e.target.value)} placeholder="123 Main St" />
               <div className="grid grid-cols-2 gap-4">
                 <Input label="City" required value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="New York" />
-                <Input label="Country" required value={form.country} onChange={(e) => update('country', e.target.value)} placeholder="USA" />
+                <Input label="State" value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="NY" />
               </div>
-              <Input label="Zip Code" value={form.zipCode} onChange={(e) => update('zipCode', e.target.value)} placeholder="10001" />
+              <div className="grid grid-cols-2 gap-4">
+                <Input label="Country" required value={form.country} onChange={(e) => update('country', e.target.value)} placeholder="USA" />
+                <Input label="Zip Code" value={form.zipCode} onChange={(e) => update('zipCode', e.target.value)} placeholder="10001" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent>
-            <h2 className="text-lg font-semibold text-gray-900">Contact</h2>
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <Input label="Email" type="email" value={form.contactEmail} onChange={(e) => update('contactEmail', e.target.value)} placeholder="info@hotel.com" />
-              <Input label="Phone" value={form.contactPhone} onChange={(e) => update('contactPhone', e.target.value)} placeholder="+1 234 567" />
+            <h2 className="text-lg font-semibold text-gray-900">Contact & Hours</h2>
+            <div className="mt-4 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Input label="Email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="info@hotel.com" />
+                <Input label="Phone" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="+1 234 567" />
+              </div>
+              <Input label="Website" value={form.website} onChange={(e) => update('website', e.target.value)} placeholder="https://hotel.com" />
+              <div className="grid grid-cols-2 gap-4">
+                <Input label="Check-in Time" type="time" value={form.checkInTime} onChange={(e) => update('checkInTime', e.target.value)} />
+                <Input label="Check-out Time" type="time" value={form.checkOutTime} onChange={(e) => update('checkOutTime', e.target.value)} />
+              </div>
             </div>
           </CardContent>
         </Card>

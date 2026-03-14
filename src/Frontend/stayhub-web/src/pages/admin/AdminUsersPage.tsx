@@ -21,12 +21,12 @@ export function AdminUsersPage() {
 
   const { data: users, isLoading } = useQuery<UserRow[]>({
     queryKey: ['admin-users'],
-    queryFn: () => api.get<UserRow[]>('/identity/users').then((r) => r.data),
+    queryFn: () => api.get<UserRow[]>('/users').then((r) => r.data),
   });
 
   const toggleActive = useMutation({
     mutationFn: ({ userId, isActive }: { userId: string; isActive: boolean }) =>
-      api.post(`/identity/users/${userId}/${isActive ? 'deactivate' : 'activate'}`),
+      api.post(`/users/${userId}/${isActive ? 'deactivate' : 'activate'}`),
     onSuccess: () => {
       toast.success('User status updated.');
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
@@ -36,7 +36,7 @@ export function AdminUsersPage() {
 
   const assignRole = useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: string }) =>
-      api.post(`/identity/users/${userId}/roles`, { role }),
+      api.post(`/users/${userId}/role`, { role }),
     onSuccess: () => {
       toast.success('Role assigned.');
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
@@ -119,12 +119,12 @@ export function AdminUsersPage() {
                       >
                         <UserX size={14} />
                       </Button>
-                      {!user.roles.includes('Owner') && (
+                      {!user.roles.includes('HotelOwner') && (
                         <Button
                           variant="ghost"
                           size="sm"
                           title="Promote to Owner"
-                          onClick={() => assignRole.mutate({ userId: user.id, role: 'Owner' })}
+                          onClick={() => assignRole.mutate({ userId: user.id, role: 'HotelOwner' })}
                         >
                           <Shield size={14} />
                         </Button>

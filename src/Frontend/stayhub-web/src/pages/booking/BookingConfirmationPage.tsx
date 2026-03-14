@@ -47,11 +47,11 @@ export function BookingConfirmationPage() {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Check-in</span>
-            <span className="text-gray-900">{formatDate(booking.checkInDate)}</span>
+            <span className="text-gray-900">{formatDate(booking.checkIn)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Check-out</span>
-            <span className="text-gray-900">{formatDate(booking.checkOutDate)}</span>
+            <span className="text-gray-900">{formatDate(booking.checkOut)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Status</span>
@@ -59,7 +59,7 @@ export function BookingConfirmationPage() {
           </div>
           <div className="flex justify-between border-t pt-3">
             <span className="text-gray-500">Total</span>
-            <span className="text-lg font-bold text-primary-600">{formatCurrency(booking.totalAmount)}</span>
+            <span className="text-lg font-bold text-primary-600">{formatCurrency(booking.priceBreakdown.total)}</span>
           </div>
         </CardContent>
       </Card>

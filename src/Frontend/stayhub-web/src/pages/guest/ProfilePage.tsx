@@ -32,14 +32,14 @@ export function ProfilePage() {
   }, [user]);
 
   const updateProfile = useMutation({
-    mutationFn: (data: typeof form) => api.put('/identity/profile', data),
+    mutationFn: (data: typeof form) => api.put('/users/me/profile', data),
     onSuccess: () => toast.success('Profile updated.'),
     onError: () => toast.error('Failed to update profile.'),
   });
 
   const changePassword = useMutation({
     mutationFn: (data: { currentPassword: string; newPassword: string }) =>
-      api.post('/identity/change-password', data),
+      api.put('/users/me/password', data),
     onSuccess: () => {
       toast.success('Password changed.');
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });

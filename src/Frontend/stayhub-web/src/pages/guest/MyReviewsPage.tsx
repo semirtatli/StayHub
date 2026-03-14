@@ -22,7 +22,7 @@ export function MyReviewsPage() {
   });
 
   const submitReview = useMutation({
-    mutationFn: (data: { title: string; comment: string; overallRating: number; reviewId?: string }) => {
+    mutationFn: (data: { title: string; body: string; overallRating: number; reviewId?: string }) => {
       if (data.reviewId) {
         return api.put(`/reviews/${data.reviewId}`, data);
       }
@@ -48,7 +48,7 @@ export function MyReviewsPage() {
   function openEdit(review: Review) {
     setEditReview(review);
     setTitle(review.title ?? '');
-    setComment(review.comment);
+    setComment(review.body);
     setRating(review.overallRating);
     setShowModal(true);
   }
@@ -65,7 +65,7 @@ export function MyReviewsPage() {
     e.preventDefault();
     submitReview.mutate({
       title,
-      comment,
+      body: comment,
       overallRating: rating,
       reviewId: editReview?.id,
     });
@@ -96,7 +96,7 @@ export function MyReviewsPage() {
                   <span className="text-xs text-gray-400">{formatDate(review.createdAt)}</span>
                 </div>
                 {review.title && <h4 className="mt-2 font-medium text-gray-800">{review.title}</h4>}
-                <p className="mt-1 text-sm text-gray-600">{review.comment}</p>
+                <p className="mt-1 text-sm text-gray-600">{review.body}</p>
                 {review.managementResponse && (
                   <div className="mt-3 rounded-lg bg-gray-50 p-3 text-sm">
                     <span className="font-medium text-gray-700">Response:</span>

@@ -1,10 +1,13 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StayHub.Services.Identity.Application.Features.AssignRole;
 using StayHub.Services.Identity.Application.Features.ChangePassword;
 using StayHub.Services.Identity.Application.Features.GetUser;
 using StayHub.Services.Identity.Application.Features.UpdateProfile;
+using StayHub.Services.Identity.Infrastructure.Identity;
 
 namespace StayHub.Services.Identity.Api.Controllers;
 
@@ -99,6 +102,73 @@ public sealed class UsersController : ApiController
         var result = await Mediator.Send(command, cancellationToken);
 
         return HandleResult(result);
+    }
+
+    /// <summary>
+    /// List all users. Admin only.
+    /// </summary>
+    [HttpGet]
+    [Authorize(Policy = "AdminOnly")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
+    {
+        var userManager = HttpContext.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
+        var users = await userManager.Users
+            .AsNoTracking()
+            .OrderByDescending(u => u.CreatedAt)
+            .ToListAsync(cancellationToken);
+
+        var result = new List<object>();
+        foreach (var user in users)
+        {
+            var roles = await userManager.GetRolesAsync(user);
+            result.Add(new
+            {
+                id = user.Id,
+                email = user.Email,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                roles = roles.ToList(),
+                emailConfirmed = user.EmailConfirmed,
+                isActive = user.IsActive
+            });
+        }
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Activate a user. Admin only.
+    /// </summary>
+    [HttpPost("{id}/activate")]
+    [Authorize(Policy = "AdminOnly")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ActivateUser(string id)
+    {
+        var userManager = HttpContext.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null) return NotFound();
+        user.IsActive = true;
+        await userManager.UpdateAsync(user);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Deactivate a user. Admin only.
+    /// </summary>
+    [HttpPost("{id}/deactivate")]
+    [Authorize(Policy = "AdminOnly")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeactivateUser(string id)
+    {
+        var userManager = HttpContext.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null) return NotFound();
+        user.IsActive = false;
+        await userManager.UpdateAsync(user);
+        return Ok();
     }
 
     /// <summary>

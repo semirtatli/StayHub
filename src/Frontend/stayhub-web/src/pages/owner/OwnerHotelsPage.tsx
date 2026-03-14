@@ -35,8 +35,8 @@ export function OwnerHotelsPage() {
             <Link key={hotel.id} to={`/owner/hotels/${hotel.id}/edit`}>
               <Card hoverable>
                 <div className="aspect-video overflow-hidden rounded-t-lg bg-gray-100">
-                  {hotel.primaryPhotoUrl ? (
-                    <img src={hotel.primaryPhotoUrl} alt={hotel.name} className="h-full w-full object-cover" />
+                  {hotel.coverImageUrl ? (
+                    <img src={hotel.coverImageUrl} alt={hotel.name} className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-gray-300">
                       <Hotel size={48} />
@@ -52,10 +52,10 @@ export function OwnerHotelsPage() {
                   <div className="mt-2 flex items-center gap-4 text-sm">
                     <span className="flex items-center gap-1 font-medium text-accent-500">
                       <Star size={14} fill="currentColor" />
-                      {hotel.averageRating?.toFixed(1) ?? 'New'}
+                      {hotel.starRating} stars
                     </span>
                     <span className="text-gray-400">•</span>
-                    <span className="text-gray-500">{hotel.totalRooms ?? 0} rooms</span>
+                    <span className="text-gray-500">{hotel.roomCount ?? 0} rooms</span>
                   </div>
                 </CardContent>
               </Card>

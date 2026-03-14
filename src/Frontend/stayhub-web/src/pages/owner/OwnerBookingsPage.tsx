@@ -3,15 +3,15 @@ import { Calendar, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils';
-import type { Booking } from '@/types';
+import type { BookingSummary } from '@/types';
 import { Button, Card, CardContent, Skeleton } from '@/components/ui';
 
 export function OwnerBookingsPage() {
   const queryClient = useQueryClient();
 
-  const { data: bookings, isLoading } = useQuery<Booking[]>({
+  const { data: bookings, isLoading } = useQuery<BookingSummary[]>({
     queryKey: ['owner-bookings'],
-    queryFn: () => api.get<Booking[]>('/bookings/owner').then((r) => r.data),
+    queryFn: () => api.get<BookingSummary[]>('/bookings/my').then((r) => r.data),
   });
 
   const updateStatus = useMutation({
@@ -42,11 +42,10 @@ export function OwnerBookingsPage() {
               <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{booking.hotelName}</h3>
-                  <p className="text-sm text-gray-500">Guest: {booking.userId}</p>
                   <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
                       <Calendar size={14} />
-                      {formatDate(booking.checkInDate)} — {formatDate(booking.checkOutDate)}
+                      {formatDate(booking.checkIn)} — {formatDate(booking.checkOut)}
                     </span>
                     <span className="flex items-center gap-1">
                       <MapPin size={14} />
@@ -57,7 +56,7 @@ export function OwnerBookingsPage() {
                     <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(booking.status)}`}>
                       {booking.status}
                     </span>
-                    <span className="font-semibold text-primary-600">{formatCurrency(booking.totalAmount)}</span>
+                    <span className="font-semibold text-primary-600">{formatCurrency(booking.totalAmount ?? 0)}</span>
                   </div>
                 </div>
 

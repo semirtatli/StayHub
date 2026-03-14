@@ -4,15 +4,15 @@ import { Calendar, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils';
-import type { Booking } from '@/types';
+import type { BookingSummary } from '@/types';
 import { Button, Card, CardContent, Skeleton } from '@/components/ui';
 
 export function MyBookingsPage() {
   const queryClient = useQueryClient();
 
-  const { data: bookings, isLoading } = useQuery<Booking[]>({
+  const { data: bookings, isLoading } = useQuery<BookingSummary[]>({
     queryKey: ['my-bookings'],
-    queryFn: () => api.get<Booking[]>('/bookings/my').then((r) => r.data),
+    queryFn: () => api.get<BookingSummary[]>('/bookings/my').then((r) => r.data),
   });
 
   const cancelBooking = useMutation({
@@ -40,13 +40,13 @@ export function MyBookingsPage() {
             <Card key={booking.id}>
               <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1">
-                  <Link to={`/hotels/${booking.hotelId}`} className="text-lg font-semibold text-gray-900 hover:text-primary-600">
+                  <span className="text-lg font-semibold text-gray-900">
                     {booking.hotelName}
-                  </Link>
+                  </span>
                   <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
                       <Calendar size={14} />
-                      {formatDate(booking.checkInDate)} — {formatDate(booking.checkOutDate)}
+                      {formatDate(booking.checkIn)} — {formatDate(booking.checkOut)}
                     </span>
                     <span className="flex items-center gap-1">
                       <MapPin size={14} />

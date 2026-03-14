@@ -1,0 +1,62 @@
+{
+  "ReverseProxy": {
+    "Clusters": {
+
+      "identity-cluster": {
+        "Destinations": {
+          "identity-primary": {
+            "Address": "http://localhost:5100"
+          }
+        }
+      },
+
+      "hotel-cluster": {
+        "Destinations": {
+          "hotel-primary": {
+            "Address": "http://localhost:5102"
+          }
+        }
+      },
+
+      "booking-cluster": {
+        "Destinations": {
+          "booking-primary": {
+            "Address": "http://localhost:5104"
+          }
+        }
+      },
+
+      "payment-cluster": {
+        "Destinations": {
+          "payment-primary": {
+            "Address": "http://localhost:5106"
+          }
+        }
+      },
+
+      "review-cluster": {
+        "Destinations": {
+          "review-primary": {
+            "Address": "http://localhost:5108"
+          }
+        }
+      },
+
+      "notification-cluster": {
+        "Destinations": {
+          "notification-primary": {
+            "Address": "http://localhost:5110"
+          }
+        }
+      },
+
+      "analytics-cluster": {
+        "Destinations": {
+          "analytics-primary": {
+            "Address": "http://localhost:5112"
+          }
+        }
+      }
+    }
+  }
+}

@@ -70,10 +70,10 @@ export function AdminHotelsPage() {
                   <td className="px-4 py-3">
                     <span className="flex items-center gap-1 text-accent-500">
                       <Star size={14} fill="currentColor" />
-                      {hotel.averageRating?.toFixed(1) ?? 'N/A'}
+                      {hotel.starRating}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">{hotel.totalRooms ?? 0}</td>
+                  <td className="px-4 py-3 text-gray-500">{hotel.roomCount ?? 0}</td>
                   <td className="px-4 py-3">
                     <Button
                       variant="ghost"

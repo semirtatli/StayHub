@@ -44,7 +44,7 @@ export function HotelDetailPage() {
     return <div className="py-16 text-center text-gray-500">Hotel not found.</div>;
   }
 
-  const photos = hotel.photos ?? [];
+  const photos = hotel.photoUrls ?? [];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -52,8 +52,8 @@ export function HotelDetailPage() {
       {photos.length > 0 && (
         <div className="relative mb-8 overflow-hidden rounded-xl">
           <img
-            src={photos[photoIdx]?.url}
-            alt={photos[photoIdx]?.caption ?? hotel.name}
+            src={photos[photoIdx]}
+            alt={hotel.name}
             className="h-96 w-full object-cover"
           />
           {photos.length > 1 && (
@@ -84,7 +84,7 @@ export function HotelDetailPage() {
           <h1 className="text-3xl font-bold text-gray-900">{hotel.name}</h1>
           <p className="mt-1 flex items-center gap-1 text-gray-500">
             <MapPin size={16} />
-            {hotel.address}, {hotel.city}, {hotel.country}
+            {hotel.address.street}, {hotel.address.city}, {hotel.address.country}
           </p>
           <div className="mt-2 flex items-center gap-2">
             <Star size={18} className="text-accent-500" fill="currentColor" />
@@ -108,7 +108,7 @@ export function HotelDetailPage() {
                         <h3 className="font-semibold text-gray-900">{room.roomType}</h3>
                         <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
-                            <Users size={14} /> {room.capacity} guests
+                            <Users size={14} /> {room.maxOccupancy} guests
                           </span>
                           <span className="flex items-center gap-1">
                             <BedDouble size={14} /> {room.roomType}
@@ -117,7 +117,7 @@ export function HotelDetailPage() {
                       </div>
                       <div className="text-right">
                         <div className="text-xl font-bold text-primary-600">
-                          {formatCurrency(room.pricePerNight)}
+                          {formatCurrency(room.basePrice)}
                           <span className="text-xs font-normal text-gray-400">/night</span>
                         </div>
                         <Button
@@ -146,11 +146,11 @@ export function HotelDetailPage() {
                   <Card key={review.id}>
                     <CardContent>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700">{review.userDisplayName ?? 'Guest'}</span>
+                        <span className="text-sm font-medium text-gray-700">{review.guestName ?? 'Guest'}</span>
                         <StarRating rating={review.overallRating} size={16} />
                       </div>
                       {review.title && <h4 className="mt-2 font-medium text-gray-900">{review.title}</h4>}
-                      <p className="mt-1 text-sm text-gray-600">{review.comment}</p>
+                      <p className="mt-1 text-sm text-gray-600">{review.body}</p>
                       {review.managementResponse && (
                         <div className="mt-3 rounded-lg bg-gray-50 p-3 text-sm">
                           <span className="font-medium text-gray-700">Management Response:</span>

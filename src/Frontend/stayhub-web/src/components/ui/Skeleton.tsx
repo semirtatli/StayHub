@@ -37,3 +37,52 @@ export function TableRowSkeleton({ cols = 5 }: { cols?: number }) {
     </tr>
   );
 }
+
+/** Skeleton for a booking card. */
+export function BookingCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-5 w-1/3" />
+        <Skeleton className="h-6 w-20 rounded-full" />
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+      <div className="flex justify-between pt-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-28 rounded-lg" />
+      </div>
+    </div>
+  );
+}
+
+/** Skeleton for a profile/detail page. */
+export function DetailPageSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-8 w-1/3" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+        ))}
+      </div>
+      <Skeleton className="h-10 w-32 rounded-lg" />
+    </div>
+  );
+}
+
+/** Skeleton for a dashboard stat card. */
+export function StatCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-3">
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-8 w-16" />
+      <Skeleton className="h-3 w-32" />
+    </div>
+  );
+}

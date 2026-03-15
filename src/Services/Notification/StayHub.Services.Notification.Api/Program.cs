@@ -4,6 +4,8 @@ using StayHub.Services.Notification.Api.Middleware;
 using StayHub.Services.Notification.Application;
 using StayHub.Services.Notification.Infrastructure;
 using StayHub.Services.Notification.Infrastructure.Persistence;
+using Hangfire;
+using StayHub.Services.Notification.Infrastructure.Jobs;
 using StayHub.Shared.Web;
 using StayHub.Shared.Web.Versioning;
 using StayHub.Shared.Web.Middleware;
@@ -17,6 +19,15 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 builder.Services.AddNotificationApplication();
 builder.Services.AddNotificationInfrastructure(builder.Configuration);
 builder.Services.AddSharedWebServices();
+
+// ── Hangfire (background job processing) ────────────────────────────────
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("NotificationDb")));
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<NotificationJobService>();
 
 // ── Authentication (JWT Bearer — validates tokens issued by Identity Service) ──
 builder.Services
@@ -110,12 +121,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ── Database migration (development only) ────────────────────────────────
-if (app.Environment.IsDevelopment())
+// ── Database migration ───────────────────────────────────────────────────
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
+    await dbContext.Database.MigrateAsync();
 }
 
 // ── Middleware pipeline ──────────────────────────────────────────────────
@@ -127,6 +137,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = [] // Development only - in production, add auth filter
+});
+
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
@@ -136,5 +151,21 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+
+// ── Recurring background jobs ──────────────────────────────────────────
+RecurringJob.AddOrUpdate<NotificationJobService>(
+    "cleanup-expired-notifications",
+    job => job.CleanupExpiredNotificationsAsync(),
+    Cron.Daily(3, 0)); // Run daily at 3:00 AM
+
+RecurringJob.AddOrUpdate<NotificationJobService>(
+    "send-pending-notifications",
+    job => job.SendPendingNotificationsAsync(),
+    "*/5 * * * *"); // Every 5 minutes
+
+RecurringJob.AddOrUpdate<NotificationJobService>(
+    "daily-digest",
+    job => job.GenerateDailyDigestAsync(),
+    Cron.Daily(8, 0)); // Run daily at 8:00 AM
 
 app.Run();

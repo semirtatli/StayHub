@@ -88,4 +88,11 @@ public static class IdentityErrors
             "Email.TokenGenerationFailed",
             "Failed to generate email confirmation token.");
     }
+
+    public static class Password
+    {
+        public static readonly Error ResetFailed = new(
+            "Password.ResetFailed",
+            "Password reset failed. The token may be invalid or expired.");
+    }
 }

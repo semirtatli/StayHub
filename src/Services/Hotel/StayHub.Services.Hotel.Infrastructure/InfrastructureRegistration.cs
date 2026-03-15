@@ -7,6 +7,7 @@ using StayHub.Services.Hotel.Infrastructure.Persistence;
 using StayHub.Services.Hotel.Infrastructure.Persistence.Repositories;
 using StayHub.Services.Hotel.Infrastructure.Storage;
 using StayHub.Shared.Infrastructure;
+using StayHub.Shared.Infrastructure.Caching;
 using StayHub.Shared.Infrastructure.Interceptors;
 using StayHub.Shared.Infrastructure.Outbox;
 using StayHub.Shared.Interfaces;
@@ -25,6 +26,9 @@ public static class InfrastructureRegistration
     {
         // ── Shared infrastructure (DateTimeProvider, interceptors) ──
         services.AddSharedInfrastructure();
+
+        // ── Redis distributed caching ──
+        services.AddStayHubCaching(configuration);
 
         // ── EF Core with SQL Server ──
         services.AddDbContext<HotelDbContext>((sp, options) =>

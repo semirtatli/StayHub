@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/features/auth/AuthContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { App } from '@/App';
 import './index.css';
 
@@ -20,9 +21,10 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
+      <ErrorBoundary>
+        <BrowserRouter>
+          <AuthProvider>
+            <App />
           <Toaster
             position="top-right"
             toastOptions={{
@@ -30,8 +32,9 @@ createRoot(document.getElementById('root')!).render(
               style: { borderRadius: '8px', background: '#333', color: '#fff' },
             }}
           />
-        </AuthProvider>
-      </BrowserRouter>
+          </AuthProvider>
+        </BrowserRouter>
+      </ErrorBoundary>
     </QueryClientProvider>
   </StrictMode>,
 );

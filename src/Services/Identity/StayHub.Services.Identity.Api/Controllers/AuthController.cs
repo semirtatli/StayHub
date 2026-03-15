@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using StayHub.Services.Identity.Application.Abstractions;
 using StayHub.Services.Identity.Application.Features.ConfirmEmail;
+using StayHub.Services.Identity.Application.Features.ForgotPassword;
 using StayHub.Services.Identity.Application.Features.Login;
 using StayHub.Services.Identity.Application.Features.RefreshToken;
 using StayHub.Services.Identity.Application.Features.Register;
 using StayHub.Services.Identity.Application.Features.ResendConfirmationEmail;
+using StayHub.Services.Identity.Application.Features.ResetPassword;
 using StayHub.Services.Identity.Application.Features.RevokeToken;
 
 namespace StayHub.Services.Identity.Api.Controllers;
@@ -166,6 +168,39 @@ public sealed class AuthController : ApiController
         return HandleResult(result);
     }
 
+    /// <summary>
+    /// Request a password reset token.
+    /// Always returns 200 OK regardless of whether the email exists (prevents email enumeration).
+    /// </summary>
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ForgotPassword(
+        [FromBody] ForgotPasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new ForgotPasswordCommand(request.Email);
+        var result = await Mediator.Send(command, cancellationToken);
+
+        return HandleResult(result);
+    }
+
+    /// <summary>
+    /// Reset a user's password using a previously issued reset token.
+    /// </summary>
+    [HttpPost("reset-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPassword(
+        [FromBody] ResetPasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new ResetPasswordCommand(request.Email, request.Token, request.NewPassword);
+        var result = await Mediator.Send(command, cancellationToken);
+
+        return HandleResult(result);
+    }
+
     // ── Private helpers ──────────────────────────────────────────────────
 
     /// <summary>
@@ -236,3 +271,13 @@ public sealed record LoginResponse(
 /// Request body for resending email confirmation.
 /// </summary>
 public sealed record ResendConfirmationRequest(string Email);
+
+/// <summary>
+/// Request body for forgot password (request reset token).
+/// </summary>
+public sealed record ForgotPasswordRequest(string Email);
+
+/// <summary>
+/// Request body for resetting password with a token.
+/// </summary>
+public sealed record ResetPasswordRequest(string Email, string Token, string NewPassword);

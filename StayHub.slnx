@@ -56,6 +56,8 @@
     <Project Path="tests/Services/Identity/StayHub.Services.Identity.UnitTests/StayHub.Services.Identity.UnitTests.csproj" />
     <Project Path="tests/Services/Hotel/StayHub.Services.Hotel.UnitTests/StayHub.Services.Hotel.UnitTests.csproj" />
     <Project Path="tests/Services/Booking/StayHub.Services.Booking.UnitTests/StayHub.Services.Booking.UnitTests.csproj" />
+    <Project Path="tests/Services/Payment/StayHub.Services.Payment.UnitTests/StayHub.Services.Payment.UnitTests.csproj" />
+    <Project Path="tests/Services/Review/StayHub.Services.Review.UnitTests/StayHub.Services.Review.UnitTests.csproj" />
   </Folder>
   <Folder Name="/tests/IntegrationTests/">
     <Project Path="tests/Services/Booking/StayHub.Services.Booking.IntegrationTests/StayHub.Services.Booking.IntegrationTests.csproj" />

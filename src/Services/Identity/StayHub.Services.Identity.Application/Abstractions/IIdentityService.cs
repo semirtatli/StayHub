@@ -73,6 +73,16 @@ public interface IIdentityService
     Task<bool> IsEmailUniqueAsync(
         string email,
         CancellationToken cancellationToken = default);
+
+    Task<Result<string>> GeneratePasswordResetTokenAsync(
+        string userId,
+        CancellationToken cancellationToken = default);
+
+    Task<Result> ResetPasswordAsync(
+        string email,
+        string token,
+        string newPassword,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>

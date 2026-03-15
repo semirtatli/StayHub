@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(find:*)",
+      "Bash(sleep:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(tasklist:*)",
+      "Bash(echo:*)",
+      "Bash(curl:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGI5MGVlMC1jZDQyLTQ3OGYtOTY0My1mNjRkZjRmMWU5ZGQiLCJlbWFpbCI6InRlc3R1c2VyQHN0YXlodWIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiR3Vlc3QiLCJqdGkiOiJmMjc1ODVkNi1lZmU1LTRiNDctOGZlZi02ZjZkZDhmMTI1MjkiLCJpYXQiOjE3NzM1MzIwMTIsIm5iZiI6MTc3MzUzMjAxMiwiZXhwIjoxNzczNTMyOTEyLCJpc3MiOiJTdGF5SHViLklkZW50aXR5IiwiYXVkIjoiU3RheUh1Yi5DbGllbnQifQ._wsYqg4gvMX7y_OFrD3fBnYUP9Cx1ACxsxU3sfZY10Y\" && echo \"=== Profile ===\" && curl -s http://localhost:5000/api/users/me -H \"Authorization: Bearer $TOKEN\" && echo \"\" && echo \"=== Bookings ===\" && curl -s http://localhost:5000/api/bookings/my -H \"Authorization: Bearer $TOKEN\" && echo \"\" && echo \"=== Reviews ===\" && curl -s http://localhost:5000/api/reviews/my -H \"Authorization: Bearer $TOKEN\")"
+    ]
+  }
+}

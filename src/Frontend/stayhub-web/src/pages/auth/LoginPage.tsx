@@ -65,6 +65,15 @@ export function LoginPage() {
             placeholder="••••••••"
           />
 
+          <div className="flex items-center justify-end">
+            <Link
+              to="/forgot-password"
+              className="text-sm font-medium text-primary-600 hover:text-primary-500"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           <Button type="submit" className="w-full" isLoading={loading}>
             Sign In
           </Button>

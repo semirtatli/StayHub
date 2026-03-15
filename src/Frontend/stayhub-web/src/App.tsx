@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { ProtectedRoute } from '@/features/auth/ProtectedRoute';
+import { useNotifications } from '@/lib/useNotifications';
 
 // ── Public pages ──
 import { HomePage } from '@/pages/HomePage';
@@ -10,6 +11,8 @@ import { HotelDetailPage } from '@/pages/HotelDetailPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { VerifyEmailPage } from '@/pages/auth/VerifyEmailPage';
+import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ForbiddenPage } from '@/pages/ForbiddenPage';
 
@@ -33,6 +36,8 @@ import { AdminUsersPage } from '@/pages/admin/AdminUsersPage';
 import { AdminHotelsPage } from '@/pages/admin/AdminHotelsPage';
 
 export function App() {
+  useNotifications();
+
   return (
     <Routes>
       {/* ── Public routes ── */}
@@ -43,6 +48,8 @@ export function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="verify-email" element={<VerifyEmailPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
 
         {/* ── Authenticated guest routes ── */}
         <Route element={<ProtectedRoute />}>

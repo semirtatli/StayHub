@@ -97,5 +97,10 @@ public sealed class ReviewEntityConfiguration : BaseEntityConfiguration<ReviewEn
         builder.HasIndex(r => new { r.UserId, r.BookingId })
             .IsUnique()
             .HasDatabaseName("IX_Reviews_UserId_BookingId");
+
+        // Unique constraint: one review per guest per hotel per booking
+        builder.HasIndex(r => new { r.HotelId, r.UserId, r.BookingId })
+            .IsUnique()
+            .HasDatabaseName("IX_Reviews_HotelId_UserId_BookingId");
     }
 }

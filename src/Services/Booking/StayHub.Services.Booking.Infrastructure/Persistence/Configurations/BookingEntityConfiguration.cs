@@ -213,5 +213,11 @@ public sealed class BookingEntityConfiguration : BaseEntityConfiguration<Booking
 
         builder.HasIndex(b => b.Status)
             .HasDatabaseName("IX_Bookings_Status");
+
+        builder.HasIndex("CheckIn")
+            .HasDatabaseName("IX_Bookings_CheckInDate");
+
+        builder.HasIndex("CheckOut")
+            .HasDatabaseName("IX_Bookings_CheckOutDate");
     }
 }

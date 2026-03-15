@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using StayHub.Shared.Interfaces;
+using StayHub.Shared.Web.Hubs;
 using StayHub.Shared.Web.Services;
 
 namespace StayHub.Shared.Web;
@@ -15,6 +16,7 @@ public static class SharedWebRegistration
     {
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<INotificationSender, SignalRNotificationSender>();
         return services;
     }
 }

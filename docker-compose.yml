@@ -17,6 +17,18 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     environment:
@@ -73,6 +85,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__HotelDb=Server=sqlserver;Database=StayHub_Hotel;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ConnectionStrings__Redis=redis:6379
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -86,6 +99,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__BookingDb=Server=sqlserver;Database=StayHub_Booking;User Id=sa;Password=StayHub@Dev2026!;TrustServerCertificate=True
+      - ConnectionStrings__Redis=redis:6379
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -157,3 +171,4 @@ services:
 volumes:
   sqlserver_data:
   rabbitmq_data:
+  redis_data:

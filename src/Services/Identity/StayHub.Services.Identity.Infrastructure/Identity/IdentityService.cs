@@ -481,6 +481,54 @@ public sealed class IdentityService : IIdentityService
         return Result.Success(MapToDto(user, role));
     }
 
+    /// <inheritdoc />
+    public async Task<Result<string>> GeneratePasswordResetTokenAsync(
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return Result.Failure<string>(IdentityErrors.User.NotFound);
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        _logger.LogInformation("Password reset token generated for UserId {UserId}", userId);
+
+        return Result.Success(token);
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> ResetPasswordAsync(
+        string email,
+        string token,
+        string newPassword,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            return Result.Failure(IdentityErrors.Password.ResetFailed);
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            _logger.LogWarning("Password reset failed for {Email}: {Errors}", email, errors);
+            return Result.Failure(IdentityErrors.Password.ResetFailed);
+        }
+
+        _logger.LogInformation("Password reset successfully for {Email}", email);
+
+        // Revoke all refresh tokens on password reset (security measure)
+        await _refreshTokenRepository.RevokeAllByUserIdAsync(user.Id, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
     // ── Private helpers ──────────────────────────────────────────────────
 
     private static UserDto MapToDto(ApplicationUser user, string role) => new(

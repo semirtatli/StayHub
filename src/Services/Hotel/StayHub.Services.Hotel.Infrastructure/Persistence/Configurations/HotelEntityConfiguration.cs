@@ -164,6 +164,15 @@ public sealed class HotelEntityConfiguration : BaseEntityConfiguration<HotelEnti
         builder.HasIndex(h => h.Status)
             .HasDatabaseName("IX_Hotels_Status");
 
+        builder.HasIndex(h => h.StarRating)
+            .HasDatabaseName("IX_Hotels_StarRating");
+
+        builder.HasIndex("Address_City")
+            .HasDatabaseName("IX_Hotels_City");
+
+        builder.HasIndex("Address_Country")
+            .HasDatabaseName("IX_Hotels_Country");
+
         builder.HasIndex(h => new { h.Name, h.OwnerId })
             .IsUnique()
             .HasDatabaseName("IX_Hotels_Name_OwnerId");

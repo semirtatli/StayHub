@@ -117,12 +117,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ── Database migration & seeding (development only) ─────────────────────
-if (app.Environment.IsDevelopment())
+// ── Database migration & seeding ─────────────────────────────────────────
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
+    await dbContext.Database.MigrateAsync();
 }
 
 await IdentitySeeder.SeedRolesAsync(app.Services);

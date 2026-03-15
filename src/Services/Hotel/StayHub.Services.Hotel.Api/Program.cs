@@ -114,14 +114,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ── Database migration & seeding (development only) ──────────────────────
-if (app.Environment.IsDevelopment())
+// ── Database migration & seeding ─────────────────────────────────────────
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
+    await dbContext.Database.MigrateAsync();
+}
 
-    // Seed demo hotels
+if (app.Environment.IsDevelopment())
+{
     await HotelSeeder.SeedAsync(app.Services);
 }
 
